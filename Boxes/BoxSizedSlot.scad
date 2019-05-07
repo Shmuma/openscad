@@ -1,9 +1,13 @@
+// Box with a slot of given size and fill the rest with pattern
+
 height = 16;
 wall_outer_thickness = 2;
 base_thickness = 1;
 wall_inner_thickness = 1;
-slots_x = 5;
-slots_y = 5;
+slot_x = 53;
+slot_y = 53;
+rest_walls_x = 1;
+rest_walls_y = 1;
 
 $fn = 20;
 pin_diameter = 3;
@@ -57,6 +61,7 @@ union() {
     }
 }
 
+/*
 inner_space = base_side - wall_outer_thickness*2 + wall_inner_thickness;
 x_ofs = inner_space / slots_x;
 y_ofs = inner_space / slots_y;
@@ -71,3 +76,34 @@ translate([0, wall_outer_thickness, 0])
         translate([0, i*y_ofs - wall_inner_thickness, 0])
             cube([base_side, wall_inner_thickness, height]);
     }
+*/
+
+translate([slot_x + wall_outer_thickness, 0, 0])
+    cube([wall_inner_thickness, base_side, height]);
+    
+translate([0, slot_y + wall_outer_thickness, 0])
+    cube([base_side, wall_inner_thickness, height]);
+
+inner_space = base_side - wall_outer_thickness*2;
+x_ofs = wall_outer_thickness + slot_x + wall_inner_thickness;
+y_ofs = wall_outer_thickness + slot_y + wall_inner_thickness;
+rest_x = base_side - x_ofs - wall_outer_thickness;
+rest_y = base_side - y_ofs - wall_outer_thickness;
+
+if (rest_walls_x > 0) {
+    step_x = (slot_x + wall_inner_thickness) / (rest_walls_x+1);
+    
+    for (i = [1:rest_walls_x]) {
+        translate([wall_outer_thickness + i*step_x - wall_inner_thickness, y_ofs, 0])
+            cube([wall_inner_thickness, rest_y, height]);
+    }
+}
+
+if (rest_walls_y > 0) {
+    step_y = (slot_y + wall_inner_thickness) / (rest_walls_y+1);
+    
+    for (i = [1:rest_walls_y]) {
+        translate([x_ofs, wall_outer_thickness + i*step_y - wall_inner_thickness, 0])
+            cube([rest_x, wall_inner_thickness, height]);
+    }
+}
