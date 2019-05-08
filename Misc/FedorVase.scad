@@ -1,3 +1,5 @@
+// Empty vase. Should be sliced with 0% infill, zero top sides, 
+// single inner boundary
 height = 40;
 diameter = 70;
 
