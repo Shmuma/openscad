@@ -4,14 +4,17 @@
 
 // Tunable params
 FIELD_ROWS = 6;  
-FIELD_COLS = 6;             // change to 7, 8 or 9 for athother levels
+FIELD_COLS = 9;             // change to 7, 8 or 9 for athother levels
 
 CELL_SIZE = 10;             // size of one cell in mm
-CELL_THICK = 1;             // thickness of cell in mm
-FIELD_BORDER = 1;           // border around the field in mm
-FIELD_FLOOR_THICK = 1;      // thickness of field's floor
-FIELD_LINE_THICK = .5;       // thickness of grid lines
+CELL_THICK = 2;             // thickness of cell in mm
+FIELD_BORDER = 2;           // border around the field in mm
+FIELD_BORDER_EXTRA = 1;     // extra thickness of field
+FIELD_FLOOR_THICK = 2;      // thickness of field's floor
+FIELD_LINE_THICK = 1;       // thickness of grid lines
 FIELD_LINE_DEPTH = 0.2;
+
+PIECES_OFFSET = 0.2;        // decrease pieces sizes to prevent PLA flatten (probably my printer is not properly calibrated)
 
 // objects to make
 MAKE_FIELD = true;          // build a field
@@ -26,13 +29,13 @@ module field_base() {
         cube([
             FIELD_COLS * CELL_SIZE + 2*FIELD_BORDER,
             FIELD_ROWS * CELL_SIZE + 2*FIELD_BORDER,
-            FIELD_FLOOR_THICK + CELL_THICK
+            FIELD_FLOOR_THICK + CELL_THICK + FIELD_BORDER_EXTRA
         ]);
         translate([FIELD_BORDER, FIELD_BORDER, FIELD_FLOOR_THICK])
         cube([
             FIELD_COLS * CELL_SIZE,
             FIELD_ROWS * CELL_SIZE,
-            CELL_THICK+1
+            CELL_THICK + FIELD_BORDER_EXTRA + 1
         ]);
     }    
 }
@@ -42,13 +45,13 @@ module cover_base() {
         cube([
             FIELD_COLS * CELL_SIZE + 4*FIELD_BORDER,
             FIELD_ROWS * CELL_SIZE + 4*FIELD_BORDER,
-            FIELD_FLOOR_THICK*2 + CELL_THICK
+            FIELD_FLOOR_THICK*2 + CELL_THICK + FIELD_BORDER_EXTRA
         ]);
         translate([FIELD_BORDER, FIELD_BORDER, FIELD_FLOOR_THICK])
         cube([
             FIELD_COLS * CELL_SIZE + 2*FIELD_BORDER,
             FIELD_ROWS * CELL_SIZE + 2*FIELD_BORDER,
-            CELL_THICK+FIELD_FLOOR_THICK+1
+            CELL_THICK+FIELD_FLOOR_THICK+FIELD_BORDER_EXTRA+1
         ]);
     }    
 }
@@ -84,21 +87,41 @@ module field_hline(i) {
 }
 
 
-module make_field() {
+module make_field_cell() {
+    linear_extrude(FIELD_LINE_DEPTH) 
     difference() {
+        square(CELL_SIZE - FIELD_LINE_THICK);
+        translate([FIELD_LINE_THICK, FIELD_LINE_THICK, 0])
+        square(CELL_SIZE - FIELD_LINE_THICK*3);
+    }
+}
+
+
+module make_field() {
+    union() {
         field_base();
-        for (i = [0:FIELD_COLS])
-            field_vline(i);
-        for (i = [0:FIELD_ROWS])
-            field_hline(i);
+        translate([FIELD_BORDER + FIELD_LINE_THICK/2, FIELD_BORDER + FIELD_LINE_THICK/2, FIELD_FLOOR_THICK]) 
+        for (i = [0:FIELD_COLS-1])
+            for (j = [0:FIELD_ROWS-1]) {
+                translate([i*CELL_SIZE, j*CELL_SIZE])
+                    make_field_cell();
+            }
+        
+//        for (i = [0:FIELD_COLS])
+//            field_vline(i);
+//        for (i = [0:FIELD_ROWS])
+//            field_hline(i);
     }
 }
 
 
 module make_cells(offsets) {
-    for (ofs = offsets) {
-        translate([ofs[0]*CELL_SIZE, ofs[1]*CELL_SIZE, 0])
-        cube([CELL_SIZE, CELL_SIZE, CELL_THICK]);
+    linear_extrude(CELL_THICK) {
+        offset(delta=-PIECES_OFFSET)
+        for (ofs = offsets) {
+            translate([ofs[0]*CELL_SIZE, ofs[1]*CELL_SIZE, 0])
+            square(CELL_SIZE);
+        }
     }
 }
 
@@ -117,15 +140,21 @@ module cover_text() {
     h_center = (FIELD_COLS * CELL_SIZE + 4*FIELD_BORDER)/2;
     v_line1 = (FIELD_ROWS * CELL_SIZE + 4*FIELD_BORDER)*3/4;
     v_line2 = (FIELD_ROWS * CELL_SIZE + 4*FIELD_BORDER)/2;
+    v_line3 = (FIELD_ROWS * CELL_SIZE + 4*FIELD_BORDER)/4;
     thick = FIELD_LINE_DEPTH;
+    font = "Liberation Sans:style=Bold";
     
     translate([h_center, v_line1, -thick])
     linear_extrude(thick*2)
-    text(str("Slide ", FIELD_COLS, "x", FIELD_ROWS), halign="center", valign="center");
-    
+    text("AntiSlide", halign="center", valign="center", font=font);
+
     translate([h_center, v_line2, -thick])
     linear_extrude(thick*2)
-    text("by shmuma", 5, halign="center", valign="center");
+    text(str(FIELD_ROWS, "×", FIELD_COLS), halign="center", valign="center", font=font);
+    
+    translate([h_center, v_line3, -thick])
+    linear_extrude(thick*2)
+    text("by shmuma", 7, halign="center", valign="center", font=font);
 }
 
 
@@ -152,7 +181,7 @@ if (MAKE_HEXA_PIECES) {
 }
 
 if (MAKE_TETR_PIECES) {
-    translate([140, 0, 0]) {
+    translate([100, 80, 0]) {
         make_tetra();
         translate([15, 0, 0])
             make_tetra();
