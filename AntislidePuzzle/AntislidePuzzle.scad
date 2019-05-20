@@ -13,6 +13,7 @@ FIELD_BORDER_EXTRA = 1;     // extra thickness of field
 FIELD_FLOOR_THICK = 2;      // thickness of field's floor
 FIELD_LINE_THICK = 1;       // thickness of grid lines
 FIELD_LINE_DEPTH = 0.2;
+TEXT_DEPTH = 0.4;
 
 PIECES_OFFSET = 0.2;        // decrease pieces sizes to prevent PLA flatten (probably my printer is not properly calibrated)
 
@@ -41,6 +42,8 @@ module field_base() {
 }
 
 module cover_base() {
+    h_center = (FIELD_COLS * CELL_SIZE + 4*FIELD_BORDER)/2;   
+    
     difference() {
         cube([
             FIELD_COLS * CELL_SIZE + 4*FIELD_BORDER,
@@ -53,7 +56,15 @@ module cover_base() {
             FIELD_ROWS * CELL_SIZE + 2*FIELD_BORDER,
             CELL_THICK+FIELD_FLOOR_THICK+FIELD_BORDER_EXTRA+1
         ]);
-    }    
+
+        translate([h_center, FIELD_BORDER*3/2, 13])
+        rotate([90, 0, 0])
+        cylinder(h=FIELD_BORDER*2, r=10);
+
+        translate([h_center, FIELD_BORDER*9/2 + FIELD_ROWS * CELL_SIZE, 13])
+        rotate([90, 0, 0])
+        cylinder(h=FIELD_BORDER*2, r=10);
+    }
 }
 
 
@@ -141,7 +152,7 @@ module cover_text() {
     v_line1 = (FIELD_ROWS * CELL_SIZE + 4*FIELD_BORDER)*3/4;
     v_line2 = (FIELD_ROWS * CELL_SIZE + 4*FIELD_BORDER)/2;
     v_line3 = (FIELD_ROWS * CELL_SIZE + 4*FIELD_BORDER)/4;
-    thick = FIELD_LINE_DEPTH;
+    thick = TEXT_DEPTH;
     font = "Liberation Sans:style=Bold";
     
     translate([h_center, v_line1, -thick])
@@ -186,8 +197,6 @@ if (MAKE_TETR_PIECES) {
         translate([15, 0, 0])
             make_tetra();
         translate([30, 0, 0])
-            make_tetra();
-        translate([45, 0, 0])
             make_tetra();
     }
 }
