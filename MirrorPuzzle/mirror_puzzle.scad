@@ -4,15 +4,15 @@
 
 // how many pieces to generate
 make_pieces_a = 7;  // 7
-make_pieces_b = 1;  // 1
+make_piece_b = true;  
 make_box = true;
 
 // side of single item in mm
-side_size = 10;
+side_size = 20;
 // thickness of box walls
-box_walls = 2;
+box_walls = 1.5;
 // extra space to add to the box
-box_delta = 0.5;
+box_delta = 1;
 
 // end of user customizable parameters list
 module puzzle_piece_a() {
@@ -24,24 +24,23 @@ module puzzle_piece_a() {
 }
 
 module puzzle_piece_b() {
+    translate([side_size, 0, 0])
     mirror([1, 0, 0])
     puzzle_piece_a();
 }
 
 if (make_pieces_a > 0) { 
+    s = ceil(sqrt(make_pieces_a));
     for (i = [1:make_pieces_a]) {
-        translate([side_size*2*(i-1), 0, 0])
+        y = floor(i/s);
+        x = i - y*s;
+        translate([(side_size+5)*x, y*(side_size*2+5), 0])
         puzzle_piece_a();
     }
 }
 
-if (make_pieces_b > 0) {
-    translate([0, side_size*3, 0]) {
-        for (i = [1:make_pieces_b]) {
-            translate([side_size*2*i, 0, 0])
-            puzzle_piece_b();
-        }
-    }
+if (make_piece_b) {
+    puzzle_piece_b();
 }
 
 if (make_box) {

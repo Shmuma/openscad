@@ -3,7 +3,7 @@ wall_outer_thickness = 2;
 base_thickness = 1;
 wall_inner_thickness = 1;
 slots_x = 5;
-slots_y = 5;
+slots_y = 3;
 
 $fn = 20;
 pin_diameter = 3;
