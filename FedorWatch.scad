@@ -2,7 +2,7 @@
 height = 6;
 width = 24;
 length = 8.5;
-thick = 1.4;
+thick = 0.8;
 
 use <scad-utils/morphology.scad>;
 
@@ -16,8 +16,8 @@ difference() {
 
 $fn = 100;
 linear_extrude(height)
-fillet(r=0.6)
-rounding(r=0.6)
+//fillet(r=0.6)
+rounding(r=0.2)
 difference() {
     square([width, length]);
     translate([thick, thick])
