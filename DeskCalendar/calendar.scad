@@ -1,9 +1,9 @@
-render_outer_ring = false;
-render_day_ring = false;
+render_outer_ring = true;
+render_day_ring = true;
 render_day_text = false;
-render_month_ring = false;
+render_month_ring = true;
 render_month_text = false;
-render_week_ring = false;
+render_week_ring = true;
 render_week_text = false;
 render_center_ring = true;
 
@@ -38,7 +38,7 @@ module center_ring() {
             cylinder(ring_thick, d=week_ring_inner_diam - rings_gap, $fn=fn);
             cylinder(full_thick, d=center_ring_extra_diam, $fn=fn);
         }
-        cylinder(full_thick + 0.1, d=center_hole_diam, $fn=fn);
+        cylinder(full_thick + 0.1, d=center_hole_diam, $fn=fn);        
         translate([0, 0, -0.1])
         cylinder(center_hole2_depth, d=center_hole2_diam, $fn=fn);
     }
