@@ -4,7 +4,8 @@ render_day_text = false;
 render_month_ring = false;
 render_month_text = false;
 render_week_ring = false;
-render_week_text = true;
+render_week_text = false;
+render_center_ring = true;
 
 //week_ring_text = "MON TUE WED THU FRI SAT SUN";
 week_ring_text = "ПНД ВТР СРД ЧТВ ПТ СБТ ВСК";
@@ -21,8 +22,28 @@ ring_base_thick = 2;
 day_ring_inner_diam = 85;
 month_ring_inner_diam = 58;
 week_ring_inner_diam = 30;
+center_ring_extra_thick = 5;
+center_ring_extra_diam = 13;
+center_hole_diam = 3;
+center_hole2_diam = 5;
+center_hole2_depth = 5;
 
 fn = 250;
+
+
+module center_ring() {
+    full_thick = ring_thick + base_thick + center_ring_extra_thick;
+    difference() {
+        union() {
+            cylinder(ring_thick, d=week_ring_inner_diam - rings_gap, $fn=fn);
+            cylinder(full_thick, d=center_ring_extra_diam, $fn=fn);
+        }
+        cylinder(full_thick + 0.1, d=center_hole_diam, $fn=fn);
+        translate([0, 0, -0.1])
+        cylinder(center_hole2_depth, d=center_hole2_diam, $fn=fn);
+    }
+}
+
 
 module outer_ring() {
     inner_t = outer_ring_thick - base_thick;
@@ -92,7 +113,7 @@ module month_text(extra_thick=0) {
 module week_text(extra_thick=0) {
     linear_extrude(0.2+extra_thick)
     mirror([0, 1, 0])
-    circletext(week_ring_text, textsize=5, radius=22, top=false);
+    circletext(week_ring_text, textsize=6, radius=22, top=false);
 }
 
 
@@ -137,4 +158,9 @@ if (render_week_ring) {
 
 if (render_week_text) {
     week_text();
+}
+
+
+if (render_center_ring) {
+    center_ring();
 }
