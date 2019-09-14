@@ -1,11 +1,11 @@
 render_outer_ring = true;
-render_day_ring = true;
+render_day_ring = false;
 render_day_text = false;
-render_month_ring = true;
+render_month_ring = false;
 render_month_text = false;
-render_week_ring = true;
+render_week_ring = false;
 render_week_text = false;
-render_center_ring = true;
+render_center_ring = false;
 
 //week_ring_text = "MON TUE WED THU FRI SAT SUN";
 week_ring_text = "ПНД ВТР СРД ЧТВ ПТ СБТ ВСК";
