@@ -3,7 +3,7 @@ db = 2;
 dc = 1;
 
 side = 5;
-gap = 0.2;
+gap = 0.3;
 
 
 module l(size, col="cyan") {
