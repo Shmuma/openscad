@@ -2,10 +2,11 @@
 // https://en.wikipedia.org/wiki/Goldberg_polyhedron#Class_I
 
 // params to tweak
-thick=.01;
+thick=10.01;
 side = 10;
 shell_thick = 2;
-shell_dr = 4;
+shell_dr = 10;
+ring_thick = 3;
 
 coeff_side_r = sqrt(10 + 22/sqrt(5))/4; // inner sphere radius to side ratio
 penta_face_ang = acos(-1/sqrt(5));
@@ -106,6 +107,41 @@ module pent_lines(n) {
         pent_lines_half(n);
 }
 
-dodecaeder();
-pent_lines_half(2);
-pent_fills_half(1);
+module ball() {
+    dodecaeder();
+    pent_lines_half(2);
+    pent_fills_half(1);
+}
+
+
+module shell(dr=shell_dr) {
+    difference() {
+        sphere(radius + dr, $fn=100);
+        sphere(radius + dr - shell_thick, $fn=100);
+    }
+}
+
+
+module ring() {
+    difference() {
+        shell();
+        translate([0, 0, -(radius + shell_dr)])
+            cube((radius + shell_dr)*2, center=true);        
+        translate([0, 0, (radius + shell_dr) + ring_thick])
+            cube((radius + shell_dr)*2, center=true);        
+    }
+}
+
+
+module diff_shell() {
+    difference() {
+        shell();
+        ball();
+        translate([0, 0, -(radius + shell_dr)])
+            cube((radius + shell_dr)*2, center=true);        
+    }
+    ring();
+}
+
+
+diff_shell();
