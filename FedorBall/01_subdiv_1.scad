@@ -1,13 +1,15 @@
-// building soccer ball and use it to get holes on a sphere
+// manual build of ball with one subdivision of hex tiles
 // params to tweak
 thick=.01;
 side = 10;
 shell_thick = 2;
 shell_dr = 4;
 
+// https://en.wikipedia.org/wiki/Goldberg_polyhedron#Class_I
+
 
 // empirical constants (would be great to have exact formulas)
-coeff_side_r = 2.26;     // ratio between polygon side and final radius
+coeff_side_r = 2.4*2;     // ratio between polygon side and final radius
 coeff_pent_delta_side = 0.06;
 ang1 = 37.4;
 ang2 = 11.3;
@@ -46,23 +48,49 @@ module pent_tile(side = side, thick=thick, tile_a=0) {
 }
 
 
+module top_triag() {
+    for (layer = [0:2]) {
+        for (i = [0:1]) {
+            rotate([0, -ang1/2 - layer*ang1/2, i*pent_a*2])
+            translate([0, 0, radius])
+                hex_tile();
+        }
+        
+        if (layer > 0) {
+            for (i = [1:layer]) {
+                rotate([0, -ang1+5, pent_a])
+                translate([0, 0, radius])
+                    hex_tile(tile_a=hex_a);
+            }
+        }
+    }
+}
+
+
 module ball() {
     // center
     translate([0, 0, radius+pent_delta])
         pent_tile();
     mirror([0, 0, 1])
     translate([0, 0, radius+pent_delta])
-        pent_tile(tile_a=pent_a);
+;//        pent_tile(tile_a=pent_a);
 
     // layer 1
+    top_triag();
+    rotate([0, -ang1+5, pent_a])
+    translate([0, 0, radius])
+;//        hex_tile(tile_a=hex_a);
+    
+    
     for (i = [0:4]) {
         rotate([0, -ang1, i*pent_a*2])
         translate([0, 0, radius])
-            hex_tile();
+;//            hex_tile();
+
         mirror([0, 0, 1])
         rotate([0, ang1, i*pent_a*2])
         translate([0, 0, radius])
-            hex_tile();
+;//            hex_tile();
     }    
 
     // center 2
@@ -73,7 +101,7 @@ module ball() {
         mirror([0, 0, 1])
         rotate([0, -ang1*2+ang2, (i-1)*pent_a])
         translate([0, 0, radius+pent_delta])
-            pent_tile();
+;//            pent_tile();
     }
 
     // layer 2
@@ -84,7 +112,7 @@ module ball() {
         mirror([0, 0, 1])
         rotate([0, -ang1*2-ang3, pent_a*i])
         translate([0, 0, radius])
-            hex_tile();
+;//            hex_tile();
     }
 }
 
