@@ -2,10 +2,10 @@
 // https://en.wikipedia.org/wiki/Goldberg_polyhedron#Class_I
 
 // params to tweak
-thick=10.01;
+shell_dr = 15;
+thick=shell_dr*2; //.01;
 side = 10;
-shell_thick = 2;
-shell_dr = 10;
+shell_thick = 4;
 ring_thick = 3;
 
 coeff_side_r = sqrt(10 + 22/sqrt(5))/4; // inner sphere radius to side ratio
