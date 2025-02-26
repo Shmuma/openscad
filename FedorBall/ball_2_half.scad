@@ -8,12 +8,12 @@ ring_thick = 3;
 // precision for $fn
 prec=20;
 shell_dr = 15;  // delta from our polyhedron to the sphere out radius
-shell_thick = 4;    
+shell_thick = 3;    
 thick=shell_dr + shell_thick*2; //.01;
 
 //=== second layer of mesh
 // scale of inner ball
-inner_scale = 0.85;
+inner_scale = 0.8;
 // radius of pins
 inner_pin_r = 1.5;
 inner_plate_thick = 3; //ring_thick;
