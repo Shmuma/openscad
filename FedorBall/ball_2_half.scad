@@ -8,15 +8,16 @@ ring_thick = 3;
 // precision for $fn
 prec=20;
 shell_dr = 15;  // delta from our polyhedron to the sphere out radius
-shell_thick = 3;    
+shell_thick = 3;
+shell_thick_out = 2;
 thick=shell_dr + shell_thick*2; //.01;
 
 //=== second layer of mesh
 // scale of inner ball
 inner_scale = 0.8;
 // radius of pins
-inner_pin_r = 1.5;
-inner_plate_thick = 3; //ring_thick;
+inner_pin_r = 1;
+inner_plate_thick = 2; //ring_thick;
 
 
 // inner sphere radius to side ratio
@@ -133,9 +134,9 @@ module ring() {
 }
 
 
-module diff_shell() {
+module diff_shell(thick=shell_thick) {
     difference() {
-        shell(out_r=sphere_r, thick=shell_thick, prec=prec);
+        shell(out_r=sphere_r, thick=thick, prec=prec);
         ball();
         translate([0, 0, -sphere_r])
             cube(sphere_r*2, center=true);        
@@ -208,9 +209,9 @@ module inner_plate_pins() {
 
 
 if (true) {
-    diff_shell();
+    diff_shell(shell_thick_out);
     scale(inner_scale)
-    diff_shell();
+    diff_shell(shell_thick);
     inner_pins_pent();
     difference() {
         inner_pins_hex();
