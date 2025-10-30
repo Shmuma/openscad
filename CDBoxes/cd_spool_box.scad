@@ -7,8 +7,11 @@ box_height = 20;
 // thickness of walls, 1 mm is normally enough
 wall_thick = 1;
 
+// count of circular sections
+circular_sections = 12;
+
 // count of radial sections
-radial_sections = 12;
+radial_sections = 2;
 
 // radius of the central box, set to 0 if not needed
 central_r = 15;
@@ -35,32 +38,6 @@ module round_wall(diam) {
     }
 }
 
-// bottom
-difference() {
-    cylinder(h=wall_thick, r = outer_d/2);
-    translate([0, 0, -0.05])
-        cylinder(h=wall_thick+0.1, r = inner_d/2);
-}
-
-// outer wall
-round_wall(diam=outer_d);
-
-// inner wall
-round_wall(diam=inner_d+wall_thick*2);
-
-// central box
-if (central_r > 0) {
-    round_wall(diam=inner_d + wall_thick*2 + central_r*2);
-}
-
-// radial walls
-wall_angle = 360 / radial_sections;
-
-for (i = [0:radial_sections-1]) {
-    rotate([0, 0, i*wall_angle])
-    translate([inner_d/2 + central_r, 0, 0])
-        cube([outer_d/2 - central_r - inner_d/2, wall_thick, box_height]);
-}
 
 // rounding near the bottom
 module bottom_rounding(radius) {
@@ -80,6 +57,45 @@ module bottom_rounding(radius) {
         }
     }
 }
+
+
+// bottom
+difference() {
+    cylinder(h=wall_thick, r = outer_d/2);
+    translate([0, 0, -0.05])
+        cylinder(h=wall_thick+0.1, r = inner_d/2);
+}
+
+// outer wall
+round_wall(diam=outer_d);
+
+// inner wall
+round_wall(diam=inner_d+wall_thick*2);
+
+// central box
+if (central_r > 0) {
+    round_wall(diam=inner_d + wall_thick*2 + central_r*2);
+}
+
+// circular walls
+wall_angle = 360 / circular_sections;
+
+for (i = [0:circular_sections-1]) {
+    rotate([0, 0, i*wall_angle])
+    translate([inner_d/2 + central_r, 0, 0])
+        cube([outer_d/2 - central_r - inner_d/2, wall_thick, box_height]);
+}
+
+// radial walls
+if (radial_sections > 1) {
+    for (i = [0:radial_sections-2]) {
+        r = (outer_d/2 - central_r - inner_d/2)*(i+1)/radial_sections;
+        d = (central_r + r)*2 + inner_d;
+        round_wall(diam=d);
+        bottom_rounding(d/2);
+    }
+}
+
 
 if (wall_round_r > 0) {
     // outer rounding
