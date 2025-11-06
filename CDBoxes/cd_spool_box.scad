@@ -11,7 +11,7 @@ wall_thick = 1;
 circular_sections = 12;
 
 // count of radial sections
-radial_sections = 2;
+radial_sections = 1;
 
 // radius of the central box, set to 0 if not needed
 central_r = 15;
@@ -22,19 +22,22 @@ wall_round_r = 5;
 // round parts precision, should be 100 or more for the final generation
 $fn = 100;
 
-// === Tweak only if neccessary (not needed for standard CD spool)
+// === Tweak only if neccessary (not needed for standard 25-CD spool)
 // inner hole diameter
 inner_d = 15;
+
+// how much to lower the inner tube (needed for some 50-CD spools)
+inner_tube_cut = 0;
 
 // outer diameter of the box
 outer_d = 119;
 // === User customization ends here
 
-module round_wall(diam) {
+module round_wall(diam, height=box_height) {
     difference() {
-        cylinder(h=box_height, r = diam/2);
+        cylinder(h=height, r = diam/2);
         translate([0, 0, -0.05])
-            cylinder(h=box_height+0.1, r = diam/2-wall_thick);
+            cylinder(h=height+0.1, r = diam/2-wall_thick);
     }
 }
 
@@ -70,7 +73,7 @@ difference() {
 round_wall(diam=outer_d);
 
 // inner wall
-round_wall(diam=inner_d+wall_thick*2);
+round_wall(diam=inner_d+wall_thick*2, height=box_height - inner_tube_cut);
 
 // central box
 if (central_r > 0) {
