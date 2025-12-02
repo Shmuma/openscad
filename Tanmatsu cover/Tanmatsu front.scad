@@ -1,7 +1,7 @@
 include <BOSL2/std.scad>
 
 // Tanmatsu front cover
-object_to_generate = "plain_cover"; //[plain_cover:Plain cover, clip:Clip]
+object_to_generate = "plain_cover1"; //[plain_cover:Plain cover, clip:Clip]
 
 // Width of the border bump
 bump_width_mm = 3.5; //[1:0.1:4]
@@ -87,6 +87,7 @@ module cover_bump() {
     }
 }
 
+
 module cover() {
     union() {
         cover_plate();
@@ -111,7 +112,7 @@ module clip(hole_fit=0.0, clip_fit=0.0) {
         difference() {
             union() {
                 clip_ear(hole_fit);
-                up(device_width)
+                right(device_width)
                     mirror([1, 0, 0])
                         clip_ear(hole_fit);
                 translate([clip_ear_width, clip_ear_width-20-hole_fit, 0])
@@ -152,5 +153,12 @@ else if (object_to_generate == "clip") {
     clip();
 }
 
-//cover();
-//offset_sweep(full_poly_path, height=bump_thick_mm, top=os_chamfer(width=1));
+
+r = difference(
+    full_poly_path,
+    offset(full_poly_path, delta=-2)
+);
+
+//polygon(r[0]);
+offset_sweep(r, height=bump_thick_mm, top=os_chamfer(width=.5));
+//path_sweep(square(1), round_corners(full_poly_path, radius=1, $fn=100));
