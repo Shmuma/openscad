@@ -1,7 +1,7 @@
 include <BOSL2/std.scad>
 
 // Tanmatsu front cover
-object_to_generate = "plain_cover1"; //[plain_cover:Plain cover, clip:Clip]
+object_to_generate = "plain_cover"; //[plain_cover:Plain cover, clip:Clip]
 
 // Width of the border bump
 bump_width_mm = 3.5; //[1:0.1:4]
@@ -30,12 +30,15 @@ clip_ear_height = 16.0;
 // small cut on sides to simplify printing vertically
 clip_side_cut = 0.5;
 
+// Chamfer size
+chamfer = 1.0;
+
 // End of user-tunable parameters
 device_width = 115.0;
 
-
-half_poly = [
-        [57.5, 10],
+// half of the case path
+half_poly_path = [
+//        [57.5, 10],
         [4.5, 10],
         [-2.5, 3],
         [-2.5, 0],
@@ -53,55 +56,32 @@ half_poly = [
         [38.0, -117],
         [44.5, -117],
         [49.0, -121.5],
-        [57.5, -121.5], // middle
+//        [57.5, -121.5], // middle
 ];
 
-// end of customizable parameters
-module outer_half_polygon() {
-    polygon([
-        [57.5, 10],
-        [4.5, 10],
-        [-2.5, 3],
-        [-2.5, 0],
-        [-1.5, -1],
-        [0, -1],        // top-left inner corner before the bump
-        [0, -97],
-        [-1.5, -97],
-        [-2.5, -98],
-        [-2.5, -115],
-        [6.5, -124], // TODO: Badge rope hole (if needed)
-        [23.5, -124],
-        [24.5, -123],
-        [24.5, -121.5],
-        [33.5, -121.5],
-        [38.0, -117],
-        [44.5, -117],
-        [49.0, -121.5],
-        [57.5, -121.5], // middle
-    ]);
-}
+full_poly_path = concat(half_poly_path, 
+    [ for (p = reverse(half_poly_path)) [device_width - p[0], p[1]]]);
 
-
-
+//module outer_half_polygon() {
+//    polygon(half_poly_path);
+//}
 
 module outer_full_polygon() {
-    outer_half_polygon();
-    translate([device_width, 0, 0])
-    mirror([1, 0, 0])
-    outer_half_polygon();
+    polygon(full_poly_path);
 }
 
 module cover_plate() {
     translate([0, 0, -cover_thick_mm])
-    linear_extrude(height=cover_thick_mm)
-    outer_full_polygon();
+    offset_sweep(full_poly_path, height=cover_thick_mm, bottom=os_chamfer(width=chamfer));
 }
 
 
 module cover_bump() {
     linear_extrude(height=bump_thick_mm)
     difference() {
+        //offset_sweep(full_poly_path, height=bump_thick_mm, top=os_chamfer(width=1));
         outer_full_polygon();
+//        linear_extrude(height=bump_thick_mm)
         offset(delta=-bump_width_mm)
             outer_full_polygon();
     }
@@ -173,4 +153,4 @@ else if (object_to_generate == "clip") {
 }
 
 //cover();
-offset_sweep(half_poly, height=2, bottom=os_chamfer(width=.5));
+//offset_sweep(full_poly_path, height=bump_thick_mm, top=os_chamfer(width=1));
