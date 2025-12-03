@@ -1,7 +1,7 @@
 include <BOSL2/std.scad>
 
 // Tanmatsu front cover
-object_to_generate = "clip"; //[plain_cover:Plain cover, clip:Clip]
+object_to_generate = "plain_cover"; //[plain_cover:Plain cover, clip:Clip]
 
 // Width of the border bump
 bump_width_mm = 3; //[1:0.1:4]
@@ -87,7 +87,7 @@ module cover_bump() {
 
 
 module bolt_bump(cut_corner=true, h=7) {
-    r = difference(move([-5, 0], square([10, h])), circle(4, $fn=100));
+    r = difference(move([-5, 0], square([10, h])), circle(2.5, $fn=100));
 
     difference() {
         offset_sweep(r, height=cover_thick_mm, top=os_chamfer(width=.5));
@@ -120,7 +120,7 @@ module four_bolt_bumps() {
 
     translate([-16, 6.5, 0])
     translate([device_width+2.5, 0, 0])
-    translate([-2.5, -124])
+    translate([0, -124])
     mirror([0, 1, 0])
     bolt_bump(cut_corner=false, h=6);    
 }
