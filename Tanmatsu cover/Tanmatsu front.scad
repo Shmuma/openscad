@@ -24,8 +24,8 @@ hole_fitting_ofs = 0.2;
 // Fitting clip thick (overhang tolerance)
 clip_fitting_ofs = 0.2;
 
-clip_ear_width = 4.3;
-clip_ear_height = 16.0;
+clip_ear_width = 4.8;
+clip_ear_height = 18.0;
 
 // small cut on sides to simplify printing vertically
 clip_side_cut = 0.5;
@@ -135,6 +135,18 @@ module cover() {
 }
 
 
+module clip_ear_bump(mask=false) {
+    bot_d = mask ? 7 : 5;
+    left(5)
+    difference() {
+        cylinder(h=4, r1=bot_d, r2=7, $fn=100);
+        left(5)
+        cube([20, 20, 10], center=true);
+    }
+}
+
+
+
 module clip_ear(fit=0.0) {
     difference() {
         linear_extrude(height=clip_ear_height + cover_thick_mm + bump_thick_mm)
@@ -147,7 +159,13 @@ module clip_ear(fit=0.0) {
         rotate([0, 45, 0])
             cube([chamfer_top*sqrt(2)-fit, 40, chamfer_top*sqrt(2)-fit], center=true);
     }
+    
+    translate([clip_ear_width, -5, clip_ear_height])
+    clip_ear_bump();
 }
+
+
+
 
 module clip(hole_fit=0.0, clip_fit=0.0) {
     translate([0, -97+16+13, -cover_thick_mm]) 
@@ -196,3 +214,5 @@ else if (object_to_generate == "clip") {
     clip();
 }
 
+clip_ear_bump(mask=true);
+//clip();
