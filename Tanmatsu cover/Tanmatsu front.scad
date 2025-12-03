@@ -24,7 +24,7 @@ hole_fitting_ofs = 0.2;
 // Fitting clip thick (overhang tolerance)
 clip_fitting_ofs = 0.2;
 
-clip_ear_width = 4.8;
+clip_ear_width = 4.3;
 clip_ear_height = 18.0;
 
 // small cut on sides to simplify printing vertically
@@ -93,7 +93,7 @@ module bolt_bump(cut_corner=true, h=7) {
         offset_sweep(r, height=cover_thick_mm, top=os_chamfer(width=chamfer_bot));
 
         if (cut_corner) {
-            translate([-5, 5, 0])
+            translate([-5.5, 5.5, 0])
                 rotate([0, 90, -45])
                     cube([5, 10, 3], center=true);
         }
@@ -102,12 +102,12 @@ module bolt_bump(cut_corner=true, h=7) {
 
 
 module four_bolt_bumps() {
-    translate([9, -9, 0])
+    translate([9.5, -9, 0])
     // align center to the start of our case coordinates
     translate([-2.5, 10, 0])
     bolt_bump();
 
-    translate([-9, -9, 0])
+    translate([-9.5, -9, 0])
     translate([device_width+2.5, 10, 0])
     mirror([1, 0, 0])
     bolt_bump();
@@ -145,10 +145,12 @@ module clip_ear_bump() {
 }
 
 
-module clip_ear_bump_proj() {
+module clip_ear_bump_proj(fit=0.0) {
     left(5)
     difference() {
-        cylinder(h=cover_thick_mm-clip_thick_mm, r1=7, r2=7, $fn=100);
+        cylinder(
+            h=cover_thick_mm-clip_thick_mm, 
+            r1=7+fit, r2=7+fit, $fn=100);
         left(5)
         cube([20, 20, 10], center=true);
     }
@@ -172,7 +174,7 @@ module clip_ear(fit=0.0) {
     clip_ear_bump();
     
     translate([clip_ear_width-0.1, -5, clip_thick_mm])
-    clip_ear_bump_proj();
+    clip_ear_bump_proj(fit*2);
 }
 
 
@@ -225,3 +227,4 @@ else if (object_to_generate == "clip") {
     clip();
 }
 
+//clip();
