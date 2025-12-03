@@ -1,10 +1,10 @@
 include <BOSL2/std.scad>
 
 // Tanmatsu front cover
-object_to_generate = "plain_cover1"; //[plain_cover:Plain cover, clip:Clip]
+object_to_generate = "clip"; //[plain_cover:Plain cover, clip:Clip]
 
 // Width of the border bump
-bump_width_mm = 3.5; //[1:0.1:4]
+bump_width_mm = 3; //[1:0.1:4]
 
 // Height of the border bump
 bump_thick_mm = 2.0; // [2:0.1:3]
@@ -24,14 +24,14 @@ hole_fitting_ofs = 0.2;
 // Fitting clip thick (overhang tolerance)
 clip_fitting_ofs = 0.2;
 
-clip_ear_width = 4.5;
+clip_ear_width = 4.3;
 clip_ear_height = 16.0;
 
 // small cut on sides to simplify printing vertically
 clip_side_cut = 0.5;
 
 // Chamfer size
-chamfer = 1.0;
+chamfer = 0.5;
 
 // End of user-tunable parameters
 device_width = 115.0;
@@ -77,14 +77,52 @@ module cover_plate() {
 
 
 module cover_bump() {
-    linear_extrude(height=bump_thick_mm)
+    r = difference(
+        full_poly_path,
+        offset(round_corners(full_poly_path, r=1.0), delta=-bump_width_mm)
+    );
+
+    offset_sweep(r, height=bump_thick_mm, top=os_chamfer(width=chamfer));
+}
+
+
+module bolt_bump(cut_corner=true, h=7) {
+    r = difference(move([-5, 0], square([10, h])), circle(4, $fn=100));
+
     difference() {
-        //offset_sweep(full_poly_path, height=bump_thick_mm, top=os_chamfer(width=1));
-        outer_full_polygon();
-//        linear_extrude(height=bump_thick_mm)
-        offset(delta=-bump_width_mm)
-            outer_full_polygon();
+        offset_sweep(r, height=cover_thick_mm, top=os_chamfer(width=.5));
+
+        if (cut_corner) {
+            translate([-5, 5, 0])
+                rotate([0, 90, -45])
+                    cube([5, 10, 3], center=true);
+        }
     }
+}
+
+
+module four_bolt_bumps() {
+    translate([9, -9, 0])
+    // align center to the start of our case coordinates
+    translate([-2.5, 10, 0])
+    bolt_bump();
+
+    translate([-9, -9, 0])
+    translate([device_width+2.5, 10, 0])
+    mirror([1, 0, 0])
+    bolt_bump();
+
+    translate([16, 6.5, 0])
+    translate([-2.5, -124])
+    mirror([0, 1, 0])
+    bolt_bump(cut_corner=false, h=6);
+
+
+    translate([-16, 6.5, 0])
+    translate([device_width+2.5, 0, 0])
+    translate([-2.5, -124])
+    mirror([0, 1, 0])
+    bolt_bump(cut_corner=false, h=6);    
 }
 
 
@@ -92,18 +130,23 @@ module cover() {
     union() {
         cover_plate();
         cover_bump();
+        four_bolt_bumps();
     }
 }
 
 
 module clip_ear(fit=0.0) {
-    linear_extrude(height=clip_ear_height + cover_thick_mm + bump_thick_mm)
-        polygon([
-            [0, 0+fit],
-            [clip_ear_width, clip_ear_width+fit],
-            [clip_ear_width, clip_ear_width-20-fit],
-            [0, clip_ear_width*2-20-fit]
-        ]);
+    difference() {
+        linear_extrude(height=clip_ear_height + cover_thick_mm + bump_thick_mm)
+            polygon([
+                [0, 0+fit],
+                [clip_ear_width, clip_ear_width+fit],
+                [clip_ear_width, clip_ear_width-20-fit],
+                [0, clip_ear_width*2-20-fit]
+            ]);
+        rotate([0, 45, 0])
+            cube([chamfer*sqrt(2)-fit, 40, chamfer*sqrt(2)-fit], center=true);
+    }
 }
 
 module clip(hole_fit=0.0, clip_fit=0.0) {
@@ -115,9 +158,9 @@ module clip(hole_fit=0.0, clip_fit=0.0) {
                 right(device_width)
                     mirror([1, 0, 0])
                         clip_ear(hole_fit);
-                translate([clip_ear_width, clip_ear_width-20-hole_fit, 0])
+                translate([clip_ear_width-hole_fit, clip_ear_width-20-hole_fit, 0])
                 cube([
-                    device_width-clip_ear_width*2, 
+                    device_width-clip_ear_width*2+hole_fit*2, 
                     20+hole_fit*2, 
                     clip_thick_mm+clip_fit], center=false);
             }
@@ -153,12 +196,3 @@ else if (object_to_generate == "clip") {
     clip();
 }
 
-
-r = difference(
-    full_poly_path,
-    offset(full_poly_path, delta=-2)
-);
-
-//polygon(r[0]);
-offset_sweep(r, height=bump_thick_mm, top=os_chamfer(width=.5));
-//path_sweep(square(1), round_corners(full_poly_path, radius=1, $fn=100));
