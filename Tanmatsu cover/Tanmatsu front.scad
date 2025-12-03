@@ -1,7 +1,7 @@
 include <BOSL2/std.scad>
 
 // Tanmatsu front cover
-object_to_generate = "plain_cover"; //[plain_cover:Plain cover, clip:Clip]
+object_to_generate = "clip"; //[plain_cover:Plain cover, clip:Clip]
 
 // Width of the border bump
 bump_width_mm = 3; //[1:0.1:4]
@@ -135,16 +135,24 @@ module cover() {
 }
 
 
-module clip_ear_bump(mask=false) {
-    bot_d = mask ? 7 : 5;
+module clip_ear_bump() {
     left(5)
     difference() {
-        cylinder(h=4, r1=bot_d, r2=7, $fn=100);
+        cylinder(h=4, r1=5, r2=7, $fn=100);
         left(5)
         cube([20, 20, 10], center=true);
     }
 }
 
+
+module clip_ear_bump_proj() {
+    left(5)
+    difference() {
+        cylinder(h=cover_thick_mm-clip_thick_mm, r1=7, r2=7, $fn=100);
+        left(5)
+        cube([20, 20, 10], center=true);
+    }
+}
 
 
 module clip_ear(fit=0.0) {
@@ -162,6 +170,9 @@ module clip_ear(fit=0.0) {
     
     translate([clip_ear_width, -5, clip_ear_height])
     clip_ear_bump();
+    
+    translate([clip_ear_width-0.1, -5, clip_thick_mm])
+    clip_ear_bump_proj();
 }
 
 
@@ -214,5 +225,3 @@ else if (object_to_generate == "clip") {
     clip();
 }
 
-clip_ear_bump(mask=true);
-//clip();
