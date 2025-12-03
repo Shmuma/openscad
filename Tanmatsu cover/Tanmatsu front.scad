@@ -30,8 +30,12 @@ clip_ear_height = 16.0;
 // small cut on sides to simplify printing vertically
 clip_side_cut = 0.5;
 
-// Chamfer size
-chamfer = 0.5;
+// Chamfer size for top size
+chamfer_top = 1.0;
+
+// for bottom bumps
+chamfer_bot = 0.5;
+
 
 // End of user-tunable parameters
 device_width = 115.0;
@@ -59,30 +63,26 @@ half_poly_path = [
 //        [57.5, -121.5], // middle
 ];
 
-full_poly_path = concat(half_poly_path, 
-    [ for (p = reverse(half_poly_path)) [device_width - p[0], p[1]]]);
+full_poly_path = round_corners(
+    concat(
+        half_poly_path, 
+        [ for (p = reverse(half_poly_path)) [device_width - p[0], p[1]]]
+    ), r=1.0, $fn=20);
 
-//module outer_half_polygon() {
-//    polygon(half_poly_path);
-//}
-
-module outer_full_polygon() {
-    polygon(full_poly_path);
-}
 
 module cover_plate() {
     translate([0, 0, -cover_thick_mm])
-    offset_sweep(full_poly_path, height=cover_thick_mm, bottom=os_chamfer(width=chamfer));
+    offset_sweep(full_poly_path, height=cover_thick_mm, bottom=os_chamfer(width=chamfer_top));
 }
 
 
 module cover_bump() {
     r = difference(
         full_poly_path,
-        offset(round_corners(full_poly_path, r=1.0), delta=-bump_width_mm)
+        offset(full_poly_path, delta=-bump_width_mm)
     );
 
-    offset_sweep(r, height=bump_thick_mm, top=os_chamfer(width=chamfer));
+    offset_sweep(r, height=bump_thick_mm, top=os_chamfer(width=chamfer_bot));
 }
 
 
@@ -90,7 +90,7 @@ module bolt_bump(cut_corner=true, h=7) {
     r = difference(move([-5, 0], square([10, h])), circle(2.5, $fn=100));
 
     difference() {
-        offset_sweep(r, height=cover_thick_mm, top=os_chamfer(width=.5));
+        offset_sweep(r, height=cover_thick_mm, top=os_chamfer(width=chamfer_bot));
 
         if (cut_corner) {
             translate([-5, 5, 0])
@@ -145,7 +145,7 @@ module clip_ear(fit=0.0) {
                 [0, clip_ear_width*2-20-fit]
             ]);
         rotate([0, 45, 0])
-            cube([chamfer*sqrt(2)-fit, 40, chamfer*sqrt(2)-fit], center=true);
+            cube([chamfer_top*sqrt(2)-fit, 40, chamfer_top*sqrt(2)-fit], center=true);
     }
 }
 
