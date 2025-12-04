@@ -1,7 +1,7 @@
 include <BOSL2/std.scad>
 
 // Tanmatsu front cover
-object_to_generate = "clip"; //[plain_cover:Plain cover, clip:Clip]
+object_to_generate = "clip"; //[cover:Plain cover, clip:Clip]
 
 // Width of the border bump
 bump_width_mm = 3; //[1:0.1:4]
@@ -24,7 +24,7 @@ hole_fitting_ofs = 0.2;
 // Fitting clip thick (overhang tolerance)
 clip_fitting_ofs = 0.2;
 
-clip_ear_width = 4.3;
+clip_ear_width = 4.5;
 clip_ear_height = 18.0;
 
 // small cut on sides to simplify printing vertically
@@ -146,6 +146,9 @@ module clip_ear_bump() {
 
 
 module clip_ear_bump_proj(fit=0.0) {
+    ymove(-10)
+    cube([2+fit, 20, cover_thick_mm-clip_thick_mm]);
+/*    
     left(5)
     difference() {
         cylinder(
@@ -154,6 +157,7 @@ module clip_ear_bump_proj(fit=0.0) {
         left(5)
         cube([20, 20, 10], center=true);
     }
+*/
 }
 
 
@@ -174,7 +178,7 @@ module clip_ear(fit=0.0) {
     clip_ear_bump();
     
     translate([clip_ear_width-0.1, -5, clip_thick_mm])
-    clip_ear_bump_proj(fit*2);
+    clip_ear_bump_proj(fit);
 }
 
 
@@ -214,7 +218,7 @@ module clip(hole_fit=0.0, clip_fit=0.0) {
 }
 
 
-if (object_to_generate == "plain_cover") {
+if (object_to_generate == "cover") {
     difference() {
         cover();
         clip(hole_fitting_ofs, clip_fitting_ofs);
@@ -226,5 +230,3 @@ else if (object_to_generate == "clip") {
     translate([-clip_ear_width, 68-clip_ear_width+clip_side_cut, cover_thick_mm])
     clip();
 }
-
-//clip();
