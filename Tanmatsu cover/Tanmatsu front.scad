@@ -1,11 +1,7 @@
 include <BOSL2/std.scad>
 
-// for thinner version:
-// cover_thick_mm = 2
-// clip_thick_mm = 1
-
 // Tanmatsu front cover
-object_to_generate = "cover"; //[cover:Plain cover, clip:Clip]
+object_to_generate = "cover_logo"; //[cover:Plain cover, clip:Clip, cover_logo:Cover with logo removed, logo:Logo text]
 
 // Width of the border bump
 bump_width_mm = 3; //[1:0.1:4]
@@ -37,6 +33,15 @@ chamfer_top = 1.0;
 // for bottom bumps
 chamfer_bot = 0.5;
 
+// printing layer height (for text)
+text_layer_thick = 0.3;
+
+// offset of the logo center
+logo_y_ofs = 20;
+
+// for thinner version:
+// cover_thick_mm = 2
+// clip_thick_mm = 1
 
 // End of user-tunable parameters
 device_width = 115.0;
@@ -218,6 +223,14 @@ module clip(hole_fit=0.0, clip_fit=0.0) {
     }
 }
 
+module logo() {
+    move([device_width/2, -logo_y_ofs, -cover_thick_mm])
+    linear_extrude(text_layer_thick)
+    mirror([1, 0, 0])
+    text("Tanmatsu", size=14, font="Arial:style=Bold", 
+        halign="center", valign="center");    
+}
+
 
 if (object_to_generate == "cover") {
     difference() {
@@ -230,4 +243,16 @@ else if (object_to_generate == "clip") {
     rotate([-90, 0, 0])    
     translate([-clip_ear_width, 68-clip_ear_width+clip_side_cut, cover_thick_mm])
     clip();
+}
+else if (object_to_generate == "cover_logo") {
+    move([-device_width/2, logo_y_ofs, cover_thick_mm])
+    difference() {
+        cover();
+        clip(hole_fitting_ofs, clip_fitting_ofs);
+        logo();
+    }    
+}
+else if (object_to_generate == "logo") {
+    move([-device_width/2, logo_y_ofs, cover_thick_mm])
+    logo();
 }
