@@ -1,7 +1,11 @@
 include <BOSL2/std.scad>
 
+// for thinner version:
+// cover_thick_mm = 2
+// clip_thick_mm = 1
+
 // Tanmatsu front cover
-object_to_generate = "clip"; //[cover:Plain cover, clip:Clip]
+object_to_generate = "cover"; //[cover:Plain cover, clip:Clip]
 
 // Width of the border bump
 bump_width_mm = 3; //[1:0.1:4]
@@ -9,17 +13,14 @@ bump_width_mm = 3; //[1:0.1:4]
 // Height of the border bump
 bump_thick_mm = 2.0; // [2:0.1:3]
 
-// Are badge rope holes needed?
-badge_rope_holes = false;
-
 // Cover thickness
-cover_thick_mm = 2; // [1:0.5:5]
+cover_thick_mm = 3; // [1:0.5:5]
 
 // Clip thickness
-clip_thick_mm = 1;
+clip_thick_mm = 1.5;
 
 // Fitting extra offset for the clip (hole tolerance)
-hole_fitting_ofs = 0.2;
+hole_fitting_ofs = 0.1;
 
 // Fitting clip thick (overhang tolerance)
 clip_fitting_ofs = 0.2;
