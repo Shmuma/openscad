@@ -1,5 +1,5 @@
 // -1 for the left side, 1 for the right, 0 for the middle
-piece_side = -1;
+piece_side = 1;
 
 // 18 is the limit for my table
 cd_count = 18;
