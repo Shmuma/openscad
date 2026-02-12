@@ -1,7 +1,8 @@
 include <BOSL2/std.scad>
 
 sx = 10;  // x step
-sy = 20;  // y step
+sy = sqrt(3) * sx;  // y step, according to the drawing, figure P5 has to have right angle
+echo(sy);
 thick = 2;
 
 P1 = [
