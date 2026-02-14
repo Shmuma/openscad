@@ -157,14 +157,3 @@ if (generate == "pieces")
      pieces();
    }
  }
-
-
-//offset_sweep(offset(piece_path(P1), delta=-tol, closed=true), height=pieces_thick, ends=os_chamfer(.4));
-
-//convex_offset_extrude(height=pieces_thick)
-//offset_sweep(height=pieces_thick)
-
-//polygon(points=concat(offset(piece_path(P5), delta=-tol, closed=true),
-//		      offset(piece_path(P5_H), delta=window_offset, closed=true)), paths=P5_P);
-
-//piece_with_hole(P5, P5_H);
