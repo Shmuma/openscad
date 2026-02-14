@@ -4,7 +4,7 @@ include <BOSL2/std.scad>
 // - pieces: set of pices
 // - base_simple: base with pushed letters (single color)
 // - both: not supposed for printing, but for debugging the alignment
-generate = "base_simple";
+generate = "pieces";
 
 // scale factor from original kvantik size
 scale = 0.6;
@@ -20,9 +20,10 @@ pieces_thick = 4;     // thickness of pieces
 
 text_size = 8;        // text size in points
 text_depth = 0.6;     // should be a layer height
-window_offset = -1.5;   // offset of the window relative to piece square size
+window_offset = -1.5; // offset of the window relative to piece square size
 
-tol = 0.2;            // tolerance for fitting
+tol = 0.15;           // tolerance for fitting
+chamfer = 0.4;        // chamfering of pieces and the base
 $fn = 100;
 
 // end of tunable parameters
@@ -63,11 +64,11 @@ module calendar_text() {
 
 module base() {
   difference() {
-      cube(size=[base_length * scale, base_width * scale, base_height * scale]);
+    cuboid(size=[base_length * scale, base_width * scale, base_height * scale], anchor=FWD+LEFT+BOT, chamfer=chamfer);
       
-      move([base_border * scale, base_border * scale, base_thick * scale])
-	cube(size=[inner_length * scale, inner_width * scale, inner_thick * scale + tol]);
-      calendar_text();
+    move([base_border * scale, base_border * scale, base_thick * scale])
+      cuboid(size=[inner_length * scale, inner_width * scale, inner_thick * scale + tol], anchor=FWD+LEFT+BOT, chamfer=-chamfer, edges=[TOP]);
+    calendar_text();
   }
 
 
@@ -118,21 +119,31 @@ P11_P = [[0, 1, 2, 3], [4, 5, 6, 7]];
 P12 = [[9, 1], [10, 1], [10, 5], [9, 5]];
 
 
-module pieces() {
-  linear_extrude(pieces_thick * scale) {
-    // without holes
-    for (p = [P1, P2, P3, P4, P7, P8, P9, P10, P12]) {
-      polygon(offset(piece_path(p), delta=-tol, closed=true));
-    }
+module piece(points) {
+  offset_sweep(offset(piece_path(points), delta=-tol, closed=true), height=pieces_thick*scale, ends=os_chamfer(.4));
+}
 
-    // P5, P6, P11
-    polygon(points=concat(offset(piece_path(P5), delta=-tol, closed=true),
-			  offset(piece_path(P5_H), delta=window_offset, closed=true)), paths=P5_P);
-    polygon(points=concat(offset(piece_path(P6), delta=-tol, closed=true),
-			  offset(piece_path(P6_H), delta=window_offset, closed=true)), paths=P6_P);
-    polygon(points=concat(offset(piece_path(P11), delta=-tol, closed=true),
-			  offset(piece_path(P11_H), delta=window_offset, closed=true)), paths=P11_P);
+module piece_with_hole(points, hole) {
+  difference() {
+    piece(points);
+    down(tol)
+      offset_sweep(offset(offset(piece_path(hole), delta=-tol, closed=true),
+			  delta=window_offset, closed=true),
+		   height=pieces_thick*scale+tol*2, ends=os_chamfer(-.4));
   }
+}
+
+
+module pieces() {
+  // without holes
+  for (p = [P1, P2, P3, P4, P7, P8, P9, P10, P12]) {
+    //polygon(offset(piece_path(p), delta=-tol, closed=true));
+    piece(p);
+  }
+
+  piece_with_hole(P5, P5_H);
+  piece_with_hole(P6, P6_H);
+  piece_with_hole(P11, P11_H);
 }
 
 
@@ -147,3 +158,13 @@ if (generate == "pieces")
    }
  }
 
+
+//offset_sweep(offset(piece_path(P1), delta=-tol, closed=true), height=pieces_thick, ends=os_chamfer(.4));
+
+//convex_offset_extrude(height=pieces_thick)
+//offset_sweep(height=pieces_thick)
+
+//polygon(points=concat(offset(piece_path(P5), delta=-tol, closed=true),
+//		      offset(piece_path(P5_H), delta=window_offset, closed=true)), paths=P5_P);
+
+//piece_with_hole(P5, P5_H);
