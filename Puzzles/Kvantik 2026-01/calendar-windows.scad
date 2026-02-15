@@ -8,13 +8,14 @@ include <BOSL2/std.scad>
 // - 2col_plate: plate for two-color version
 // - 2col_text: letters text for two-color version
 // - 2col_full: for debugging the alignment 
-generate = "simple_full";
+generate = "2col_full";
 
 pieces_grid = 14;     // size of basic piece square
 base_border = 6;      // border width
 
 base_height = 4;      // total height
-base_thick = 1;       // bottom thickness
+base_thick = 1;       // bottom thickness of the simple base
+base_thick_2col = 1.5;  // bottom fitness of the two color base
 pieces_thick = 2;     // thickness of pieces
 
 text_size = 8;        // text size in points
@@ -31,6 +32,7 @@ $fn = 100;
 inner_width = pieces_grid*5;
 inner_length = pieces_grid*10;
 inner_thick = base_height - base_thick;
+inner_thick_2col = base_height - base_thick_2col;
 base_width = inner_width + base_border*2;
 base_length = inner_length + base_border*2;
 
@@ -49,14 +51,13 @@ texts =
 
 
 
-module calendar_text() {
-  move([(base_border + inner_length/2), (base_border + inner_width/2), base_thick - text_depth]) {
-    linear_extrude(text_depth + tol) {
-      grid_copies(size=[inner_length*9/10, inner_width*4/5], n=[10, 5]) {
-	text(texts[4-$row][$col], font="Arial Narrow",
-	     size=text_size - (len(texts[4-$row][$col]) - 1) * 1.5,
-	     halign="center", valign="center");
-      }
+module calendar_text(depth) {
+  move([inner_length/2, inner_width/2])
+  linear_extrude(depth) {
+    grid_copies(size=[inner_length*9/10, inner_width*4/5], n=[10, 5]) {
+      text(texts[4-$row][$col], font="Arial Narrow",
+	   size=text_size - (len(texts[4-$row][$col]) - 1) * 1.5,
+	   halign="center", valign="center");
     }
   }
 }
@@ -68,7 +69,8 @@ module base() {
       
     move([base_border, base_border, base_thick])
       cuboid(size=[inner_length, inner_width, inner_thick + tol], anchor=FWD+LEFT+BOT, chamfer=-chamfer, edges=[TOP]);
-    calendar_text();
+    move([base_border, base_border, base_thick - text_depth])
+      calendar_text(text_depth + tol);
   }
 
 
@@ -120,7 +122,7 @@ P12 = [[9, 1], [10, 1], [10, 5], [9, 5]];
 
 
 module piece(points) {
-  offset_sweep(offset(piece_path(points), delta=-tol, closed=true), height=pieces_thick, ends=os_chamfer(.4));
+  offset_sweep(offset(piece_path(points), delta=-tol, closed=true), height=pieces_thick, ends=os_chamfer(chamfer));
 }
 
 module piece_with_hole(points, hole) {
@@ -129,7 +131,7 @@ module piece_with_hole(points, hole) {
     down(tol)
       offset_sweep(offset(offset(piece_path(hole), delta=-tol, closed=true),
 			  delta=window_offset, closed=true),
-		   height=pieces_thick+tol*2, ends=os_chamfer(-.4));
+		   height=pieces_thick+tol*2, ends=os_chamfer(-chamfer));
   }
 }
 
@@ -137,13 +139,59 @@ module piece_with_hole(points, hole) {
 module pieces() {
   // without holes
   for (p = [P1, P2, P3, P4, P7, P8, P9, P10, P12]) {
-    //polygon(offset(piece_path(p), delta=-tol, closed=true));
     piece(p);
   }
 
   piece_with_hole(P5, P5_H);
   piece_with_hole(P6, P6_H);
   piece_with_hole(P11, P11_H);
+}
+
+
+
+// Two color frame profile
+FRAME_PROFILE = [[0, base_height],
+		 [0, 0], [base_border - tol/2, 0],
+		 [base_border - base_thick_2col - tol/2, base_thick_2col],
+		 [base_border + inner_width + base_thick_2col + tol, base_thick_2col],
+		 [base_border + inner_width + tol, 0], [base_width, 0],
+		 [base_width, base_height]];
+
+
+module twocol_frame() {
+  difference() {
+    move([0, base_width, base_height])
+      zrot(-90)
+      xrot(-90)
+      offset_sweep(FRAME_PROFILE, height=base_length, ends=os_chamfer(chamfer));
+    
+    move([base_border, base_border, -tol/2])
+      cuboid([inner_length, inner_width, inner_thick + tol], anchor=FWD+LEFT+BOT);
+  }
+}
+
+
+module text_mask() {
+  //  move([base_length, base_thick_2col])
+  xflip(x=base_length/2)
+  move([base_border, base_thick_2col])
+    calendar_text(layer_height);
+}
+
+
+// Two color plate profile
+PLATE_PROFILE = [[0, 0], [inner_width + base_thick_2col * 2, 0],
+		 [inner_width + base_thick_2col, base_thick_2col],
+		 [base_thick_2col, base_thick_2col]];
+
+
+module twocol_plate() {
+  difference() {
+    zrot(90)
+      xrot(90)
+      offset_sweep(PLATE_PROFILE, height=base_length);
+    text_mask();
+  }
 }
 
 
@@ -156,11 +204,15 @@ else if (generate == "simple_full") {
   move([base_border, base_border, base_thick]) {
     pieces();
   }
+} else if (generate == "2col_frame")
+  twocol_frame();
+else if (generate == "2col_plate")
+  twocol_plate();
+else if (generate == "2col_text")
+  text_mask();
+else if (generate == "2col_full") {
+  twocol_frame();
+  
+  move([0, base_border - base_thick_2col - tol/2, inner_thick_2col])
+    twocol_plate();
 }
-
-
-// Two color frame profile on YZ plane
-
-FRAME_PROFILE = [[0, 0], [base_width, 0], [base_width, base_height], [0, base_height]];
-
-//polygon(FRAME_PROFILE);
