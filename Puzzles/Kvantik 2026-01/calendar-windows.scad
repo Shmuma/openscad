@@ -8,14 +8,13 @@ include <BOSL2/std.scad>
 // - 2col_plate: plate for two-color version
 // - 2col_text: letters text for two-color version
 // - 2col_full: for debugging the alignment 
-generate = "2col_full";
+generate = "2col_plate";
 
-pieces_grid = 14;     // size of basic piece square
+pieces_grid = 15;     // size of basic piece square
 base_border = 6;      // border width
 
-base_height = 4;      // total height
-base_thick = 1;       // bottom thickness of the simple base
-base_thick_2col = 1.5;  // bottom fitness of the two color base
+base_height = 5;      // total height
+base_thick = 2;       // bottom thickness
 pieces_thick = 2;     // thickness of pieces
 
 text_size = 8;        // text size in points
@@ -32,7 +31,6 @@ $fn = 100;
 inner_width = pieces_grid*5;
 inner_length = pieces_grid*10;
 inner_thick = base_height - base_thick;
-inner_thick_2col = base_height - base_thick_2col;
 base_width = inner_width + base_border*2;
 base_length = inner_length + base_border*2;
 
@@ -151,10 +149,10 @@ module pieces() {
 
 // Two color frame profile
 FRAME_PROFILE = [[0, base_height],
-		 [0, 0], [base_border - tol/2, 0],
-		 [base_border - base_thick_2col - tol/2, base_thick_2col],
-		 [base_border + inner_width + base_thick_2col + tol, base_thick_2col],
-		 [base_border + inner_width + tol, 0], [base_width, 0],
+		 [0, 0], [base_border, 0],
+		 [base_border - base_thick, base_thick],
+		 [base_border + inner_width + base_thick, base_thick],
+		 [base_border + inner_width, 0], [base_width, 0],
 		 [base_width, base_height]];
 
 
@@ -174,15 +172,15 @@ module twocol_frame() {
 module text_mask() {
   //  move([base_length, base_thick_2col])
   xflip(x=base_length/2)
-  move([base_border, base_thick_2col])
+  move([base_border, base_thick])
     calendar_text(layer_height);
 }
 
 
 // Two color plate profile
-PLATE_PROFILE = [[0, 0], [inner_width + base_thick_2col * 2, 0],
-		 [inner_width + base_thick_2col, base_thick_2col],
-		 [base_thick_2col, base_thick_2col]];
+PLATE_PROFILE = [[0, 0], [inner_width + base_thick * 2, 0],
+		 [inner_width + base_thick, base_thick],
+		 [base_thick, base_thick]];
 
 
 module twocol_plate() {
@@ -213,6 +211,6 @@ else if (generate == "2col_text")
 else if (generate == "2col_full") {
   twocol_frame();
   
-  move([0, base_border - base_thick_2col - tol/2, inner_thick_2col])
+  move([0, base_border - base_thick, inner_thick])
     twocol_plate();
 }
