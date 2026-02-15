@@ -2,38 +2,38 @@ include <BOSL2/std.scad>
 
 // what to generate. Options: pieces, base_simple
 // - pieces: set of pices
-// - base_simple: base with pushed letters (single color)
-// - both: not supposed for printing, but for debugging the alignment
-generate = "pieces";
+// - simple_base: base with pushed letters (single color)
+// - simple_full: not supposed for printing, but for debugging the alignment
+// - 2col_frame: frame for two-color version
+// - 2col_plate: plate for two-color version
+// - 2col_text: letters text for two-color version
+// - 2col_full: for debugging the alignment 
+generate = "simple_full";
 
-// scale factor from original kvantik size
-scale = 0.6;
+pieces_grid = 14;     // size of basic piece square
+base_border = 6;      // border width
 
-pieces_grid = 24;
-base_border = 10;
-base_width = pieces_grid*5 + base_border*2;
-base_length = pieces_grid*10 + base_border*2;
-
-base_height = 7;      // total height
-base_thick = 2;       // bottom thickness
-pieces_thick = 4;     // thickness of pieces
+base_height = 4;      // total height
+base_thick = 1;       // bottom thickness
+pieces_thick = 2;     // thickness of pieces
 
 text_size = 8;        // text size in points
-text_depth = 0.6;     // should be a layer height
+layer_height = 0.3;   // printing layer height
+text_depth = layer_height*2;     // text depth in simple_base variant
 window_offset = -1.5; // offset of the window relative to piece square size
 
-tol = 0.15;           // tolerance for fitting
+tol = 0.2;           // tolerance for fitting
 chamfer = 0.4;        // chamfering of pieces and the base
 $fn = 100;
 
 // end of tunable parameters
 // size of the inner part
-inner_length = base_length - base_border*2;
-inner_width = base_width - base_border*2;
+inner_width = pieces_grid*5;
+inner_length = pieces_grid*10;
 inner_thick = base_height - base_thick;
+base_width = inner_width + base_border*2;
+base_length = inner_length + base_border*2;
 
-dx = inner_length * scale / 10;
-dy = inner_width * scale / 5;
 
 // temporary grid to check the text location and alignment
 show_grid = false;
@@ -50,9 +50,9 @@ texts =
 
 
 module calendar_text() {
-  move([(base_border + inner_length/2)*scale, (base_border + inner_width/2)*scale, base_thick*scale - text_depth]) {
+  move([(base_border + inner_length/2), (base_border + inner_width/2), base_thick - text_depth]) {
     linear_extrude(text_depth + tol) {
-      grid_copies(size=[inner_length*scale*9/10, inner_width*scale*4/5], n=[10, 5]) {
+      grid_copies(size=[inner_length*9/10, inner_width*4/5], n=[10, 5]) {
 	text(texts[4-$row][$col], font="Arial Narrow",
 	     size=text_size - (len(texts[4-$row][$col]) - 1) * 1.5,
 	     halign="center", valign="center");
@@ -64,25 +64,25 @@ module calendar_text() {
 
 module base() {
   difference() {
-    cuboid(size=[base_length * scale, base_width * scale, base_height * scale], anchor=FWD+LEFT+BOT, chamfer=chamfer);
+    cuboid(size=[base_length, base_width, base_height], anchor=FWD+LEFT+BOT, chamfer=chamfer);
       
-    move([base_border * scale, base_border * scale, base_thick * scale])
-      cuboid(size=[inner_length * scale, inner_width * scale, inner_thick * scale + tol], anchor=FWD+LEFT+BOT, chamfer=-chamfer, edges=[TOP]);
+    move([base_border, base_border, base_thick])
+      cuboid(size=[inner_length, inner_width, inner_thick + tol], anchor=FWD+LEFT+BOT, chamfer=-chamfer, edges=[TOP]);
     calendar_text();
   }
 
 
 
   if (show_grid) {
-    move([base_border*scale, base_border*scale, base_thick*scale + tol]) {
+    move([base_border, base_border, base_thick + tol]) {
       for (r = [1:4]) {
-	y = r*pieces_grid*scale;
-	stroke([[0, y], [inner_length*scale, y]], width=0.3);
+	y = r*pieces_grid;
+	stroke([[0, y], [inner_length, y]], width=0.3);
       }
 
       for (c = [1:9]) {
-	x = c*pieces_grid*scale;
-	stroke([[x, 0], [x, inner_width*scale]], width=0.3);
+	x = c*pieces_grid;
+	stroke([[x, 0], [x, inner_width]], width=0.3);
       }
     }
   }
@@ -90,7 +90,7 @@ module base() {
 }
 
 
-function piece_path(pts) = [for (p = pts) [p[0]*dx, p[1]*dy]];
+function piece_path(pts) = [for (p = pts) [p[0]*pieces_grid, p[1]*pieces_grid]];
   
 
 // Pieces coordinates
@@ -120,7 +120,7 @@ P12 = [[9, 1], [10, 1], [10, 5], [9, 5]];
 
 
 module piece(points) {
-  offset_sweep(offset(piece_path(points), delta=-tol, closed=true), height=pieces_thick*scale, ends=os_chamfer(.4));
+  offset_sweep(offset(piece_path(points), delta=-tol, closed=true), height=pieces_thick, ends=os_chamfer(.4));
 }
 
 module piece_with_hole(points, hole) {
@@ -129,7 +129,7 @@ module piece_with_hole(points, hole) {
     down(tol)
       offset_sweep(offset(offset(piece_path(hole), delta=-tol, closed=true),
 			  delta=window_offset, closed=true),
-		   height=pieces_thick*scale+tol*2, ends=os_chamfer(-.4));
+		   height=pieces_thick+tol*2, ends=os_chamfer(-.4));
   }
 }
 
@@ -149,11 +149,18 @@ module pieces() {
 
 if (generate == "pieces")
   pieces();
- else if (generate == "base_simple")
-   base();
- else if (generate == "both") {
-   base();
-   move([base_border*scale, base_border*scale, base_thick*scale]) {
-     pieces();
-   }
- }
+else if (generate == "simple_base")
+  base();
+else if (generate == "simple_full") {
+  base();
+  move([base_border, base_border, base_thick]) {
+    pieces();
+  }
+}
+
+
+// Two color frame profile on YZ plane
+
+FRAME_PROFILE = [[0, 0], [base_width, 0], [base_width, base_height], [0, base_height]];
+
+//polygon(FRAME_PROFILE);
