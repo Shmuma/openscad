@@ -8,7 +8,7 @@ include <BOSL2/std.scad>
 // - 2col_plate: plate for two-color version
 // - 2col_text: letters text for two-color version
 // - 2col_full: for debugging the alignment 
-generate = "2col_plate";
+generate = "simple_base";
 
 pieces_grid = 15;     // size of basic piece square
 base_border = 6;      // border width
@@ -17,6 +17,7 @@ base_height = 5;      // total height
 base_thick = 2;       // bottom thickness
 pieces_thick = 2;     // thickness of pieces
 
+text_lang = "ru";     // text language. Supported 'en' and 'ru'
 text_size = 8;        // text size in points
 layer_height = 0.3;   // printing layer height
 text_depth = layer_height*2;     // text depth in simple_base variant
@@ -38,15 +39,26 @@ base_length = inner_length + base_border*2;
 // temporary grid to check the text location and alignment
 show_grid = false;
 
-texts =
-  [
-   ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС", "1", "2", "3"],
+texts_ru =
+  [["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС", "1", "2", "3"],
    ["4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
    ["14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
    ["24", "25", "26", "27", "ЯНВ", "ФЕВ", "МАР", "АПР", "МАЙ", "ИЮН"],
-   ["28", "29", "30", "31", "ИЮЛ", "АВГ", "СЕН", "ОКТ", "НОЯ", "ДЕК"],
-  ];
+   ["28", "29", "30", "31", "ИЮЛ", "АВГ", "СЕН", "ОКТ", "НОЯ", "ДЕК"]];
 
+texts_en =
+  [["MO", "TU", "WE", "TH", "FR", "SA", "SU", "1", "2", "3"],
+   ["4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
+   ["14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
+   ["24", "25", "26", "27", "JAN", "FEB", "MAR", "APR", "MAY", "JUN"],
+   ["28", "29", "30", "31", "JUL", "AUG", "SEN", "OCT", "NOV", "DEC"]];
+
+
+texts = (text_lang == "en" ?
+	 texts_en :
+	 (text_lang == "ru" ?
+	  texts_ru :
+	  assert_equal(1, 2, "Language is not supported")));
 
 
 module calendar_text(depth) {
