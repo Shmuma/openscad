@@ -8,23 +8,39 @@ include <BOSL2/std.scad>
 // - 2col_plate: plate for two-color version
 // - 2col_text: letters text for two-color version
 // - 2col_full: for debugging the alignment 
-generate = "simple_base";
 
-pieces_grid = 15;     // size of basic piece square
-base_border = 6;      // border width
+// Model to generate
+generate = "simple_base"; // [pieces, simple_base, 2col_frame, 2cal_plate, 2col_text]
 
-base_height = 5;      // total height
-base_thick = 2;       // bottom thickness
-pieces_thick = 2;     // thickness of pieces
+// Size of one basic square
+pieces_grid = 15;     // [10:20]
 
-text_lang = "ru";     // text language. Supported 'en' and 'ru'
-text_size = 8;        // text size in points
-layer_height = 0.3;   // printing layer height
+// Size of outer border
+base_border = 6;      // [1:10]
+
+// Total height of base
+base_height = 5;
+// Thickness of the bottom plate
+base_thick = 2;
+// Thickness of the pieces
+pieces_thick = 2;
+
+// Language of calendar text
+text_lang = "ru";     // [ru, en]
+// Font size in points
+text_size = 8;
+// Thickness of the printing layer
+layer_height = 0.3;
 text_depth = layer_height*2;     // text depth in simple_base variant
-window_offset = -1.5; // offset of the window relative to piece square size
 
-tol = 0.2;           // tolerance for fitting
-chamfer = 0.4;        // chamfering of pieces and the base
+// Offset of the window relative to the grid size
+window_offset = -1.5;
+
+// Tolerance for pieces fitting
+tol = 0.2;
+// Chamfer of pieces and base
+chamfer = 0.4;
+// Circle extrapolation
 $fn = 100;
 
 // end of tunable parameters
