@@ -10,7 +10,7 @@ include <BOSL2/std.scad>
 // - 2col_full: for debugging the alignment 
 
 // Model to generate
-generate = "simple_base"; // [pieces, simple_base, 2col_frame, 2cal_plate, 2col_text]
+generate = "simple_base"; // [pieces, simple_base, 2col_frame, 2col_plate, 2col_text]
 
 // Size of one basic square
 pieces_grid = 15;     // [10:20]
