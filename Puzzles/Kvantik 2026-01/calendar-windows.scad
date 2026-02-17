@@ -83,7 +83,7 @@ texts = (text_lang == "en" ?
 	  texts_ru :
 	  (text_lang == "de" ?
 	   texts_de :
-	   assert_equal(1, 2, "Language is not supported")));
+	   assert_equal(1, 2, "Language is not supported"))));
 
 
 module calendar_text(depth) {
