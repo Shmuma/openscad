@@ -26,7 +26,7 @@ base_thick = 2;
 pieces_thick = 2;
 
 // Language of calendar text
-text_lang = "de";     // [ru, en, de]
+text_lang = "de";     // [ru, en, de, fr]
 // Font size in points
 text_size = 8;
 // Thickness of the printing layer
@@ -76,6 +76,12 @@ texts_de =
    ["24", "25", "26", "27", "JAN", "FEB", "MÄR", "APR", "MAI", "JUN"],
    ["28", "29", "30", "31", "JUL", "AUG", "SEP", "OKT", "NOV", "DEZ"]];
 
+texts_fr =
+  [["LU", "MA", "ME", "JE", "VE", "SA", "DI", "1", "2", "3"],
+   ["4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
+   ["14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
+   ["24", "25", "26", "27", "JAN", "FEV", "MAR", "AVR", "MAI", "JUN"],
+   ["28", "29", "30", "31", "JUI", "AOU", "SEP", "OCT", "NOV", "DEC"]];
 
 texts = (text_lang == "en" ?
 	 texts_en :
@@ -83,8 +89,9 @@ texts = (text_lang == "en" ?
 	  texts_ru :
 	  (text_lang == "de" ?
 	   texts_de :
-	   assert_equal(1, 2, "Language is not supported"))));
-
+     (text_lang == "fr" ?
+       texts_fr :
+       (assert_equal(1, 2, "Language is not supported"))))));
 
 module calendar_text(depth) {
   move([inner_length/2, inner_width/2])
