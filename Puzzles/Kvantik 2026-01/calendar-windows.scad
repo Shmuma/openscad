@@ -76,6 +76,12 @@ texts_de =
    ["24", "25", "26", "27", "JAN", "FEB", "MÄR", "APR", "MAI", "JUN"],
    ["28", "29", "30", "31", "JUL", "AUG", "SEP", "OKT", "NOV", "DEZ"]];
 
+texts_sv =
+  [["MÅ", "TI", "ON", "TO", "FR", "LÖ", "SÖ", "1", "2", "3"],
+   ["4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
+   ["14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
+   ["24", "25", "26", "27", "JAN", "FEB", "MAR", "APR", "MAJ", "JUN"],
+   ["28", "29", "30", "31", "JUL", "AUG", "SEP", "OKT", "NOV", "DEC"]];
 
 texts = (text_lang == "en" ?
 	 texts_en :
@@ -83,6 +89,8 @@ texts = (text_lang == "en" ?
 	  texts_ru :
 	  (text_lang == "de" ?
 	   texts_de :
+		text_lang == "sv" ?
+         texts_sv :
 	   assert_equal(1, 2, "Language is not supported"))));
 
 
