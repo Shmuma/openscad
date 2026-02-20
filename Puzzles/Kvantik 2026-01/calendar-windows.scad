@@ -26,7 +26,7 @@ base_thick = 2;
 pieces_thick = 2;
 
 // Language of calendar text
-text_lang = "de";     // [ru, en, de]
+text_lang = "de";     // [ru, en, de, sv]
 // Font size in points
 text_size = 8;
 // Thickness of the printing layer
