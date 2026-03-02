@@ -26,7 +26,7 @@ base_thick = 2;
 pieces_thick = 2;
 
 // Language of calendar text
-text_lang = "de";     // [ru, en, de, fr]
+text_lang = "de";     // [ru, en, de, fr, sv]
 // Font size in points
 text_size = 8;
 // Thickness of the printing layer
@@ -76,6 +76,13 @@ texts_de =
    ["24", "25", "26", "27", "JAN", "FEB", "MÄR", "APR", "MAI", "JUN"],
    ["28", "29", "30", "31", "JUL", "AUG", "SEP", "OKT", "NOV", "DEZ"]];
 
+texts_sv =
+  [["MÅ", "TI", "ON", "TO", "FR", "LÖ", "SÖ", "1", "2", "3"],
+   ["4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
+   ["14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
+   ["24", "25", "26", "27", "JAN", "FEB", "MAR", "APR", "MAJ", "JUN"],
+   ["28", "29", "30", "31", "JUL", "AUG", "SEP", "OKT", "NOV", "DEC"]];
+   
 texts_fr =
   [["LU", "MA", "ME", "JE", "VE", "SA", "DI", "1", "2", "3"],
    ["4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
