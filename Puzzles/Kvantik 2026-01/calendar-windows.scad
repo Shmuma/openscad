@@ -26,7 +26,7 @@ base_thick = 2;
 pieces_thick = 2;
 
 // Language of calendar text
-text_lang = "de";     // [ru, en, de, fr, sv]
+text_lang = "sv";     // [ru, en, de, fr, sv]
 // Font size in points
 text_size = 8;
 // Thickness of the printing layer
@@ -96,9 +96,11 @@ texts = (text_lang == "en" ?
 	  texts_ru :
 	  (text_lang == "de" ?
 	   texts_de :
-     (text_lang == "fr" ?
-       texts_fr :
-       (assert_equal(1, 2, "Language is not supported"))))));
+	   (text_lang == "fr" ?
+	    texts_fr :
+	    (text_lang == "sv" ?
+	     texts_sv :
+	     (assert_equal(1, 2, "Language is not supported")))))));
 
 module calendar_text(depth) {
   move([inner_length/2, inner_width/2])
