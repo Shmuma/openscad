@@ -90,9 +90,10 @@ module calendar_text(depth) {
   move([inner_length/2, inner_width/2])
   linear_extrude(depth) {
     grid_copies(size=[inner_length*9/10, inner_width*4/5], n=[10, 5]) {
-      text(texts[4-$row][$col], font="Arial Narrow",
-	   size=text_size - (len(texts[4-$row][$col]) - 1) * 1.5,
-	   halign="center", valign="center");
+      let (tsize = text_size - (len(texts[4-$row][$col]) - 1) * 1.5) {
+	move([0, -tsize/2, 0])
+	text(texts[4-$row][$col], font="Arial Narrow", size=tsize, halign="center", valign="baseline");
+      }
     }
   }
 }
