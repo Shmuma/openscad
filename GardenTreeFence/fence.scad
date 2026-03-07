@@ -1,6 +1,6 @@
 include <BOSL2/std.scad>
 
-generate = "circle";
+generate = "assembly";
 
 $fn = 100;
 
@@ -61,11 +61,26 @@ module plane() {
 
 
 if (generate == "circle") {
-  fence_circle();
+    fence_circle();
 }
 else if (generate == "plane_diff") {
     plane_diff();
 }
 else if (generate == "plane") {
+    plane();
+}
+else if (generate == "assembly") {
+    fence_circle();
+
+    up(plane_len/2)
+    fence_circle();
+
+    up(plane_len - circle_h)
+    fence_circle();
+
+    
+    zrot_copies(n=planes_count)
+    move([-plane_l1/2, -plane_w/2 - circle_d/2 + circle_w/2, 0])
+    rotate([-90, 0, 0])
     plane();
 }
