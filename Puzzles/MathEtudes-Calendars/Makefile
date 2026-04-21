@@ -2,13 +2,13 @@
 OSCAD := "/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD"
 SHELL := /bin/bash
 SCRIPT := Panov10x5.scad
-OUT := stl-Panov10x5
+OUT := stl-Panov10x5-SansNarrow
 
 LANGS := en ru de fr sv
 
 
 .PHONY: langs $(LANGS)
-all: $(OUT)/pieces.stl $(OUT)/frame.stl langs
+all: $(OUT)/pieces.stl $(OUT)/two_colors/frame.stl langs
 
 $(OUT)/pieces.stl: $(SCRIPT)
 	$(OSCAD) -o $@ -D generate=\"pieces\" $<

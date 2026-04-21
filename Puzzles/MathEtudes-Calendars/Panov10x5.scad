@@ -12,7 +12,7 @@ include <BOSL2/std.scad>
 // - 2col_full: for debugging the alignment 
 
 // Model to generate
-generate = "simple_full"; // [pieces, simple_base, 2col_frame, 2col_plate, 2col_text]
+generate = "2col_text"; // [pieces, simple_base, 2col_frame, 2col_plate, 2col_text]
 
 // Size of one basic square
 pieces_grid = 15;     // [10:20]
@@ -29,8 +29,9 @@ pieces_thick = 2;
 
 // Language of calendar text
 text_lang = "ru";     // [ru, en, de, fr, sv]
+text_font = "PT Sans Narrow:style=Bold";
 // Font size in points
-text_size = 8;
+text_size = 8.5;
 // Thickness of the printing layer
 layer_height = 0.3;
 text_depth = layer_height*2;     // text depth in simple_base variant
@@ -110,7 +111,7 @@ module calendar_text(depth) {
     grid_copies(size=[inner_length*9/10, inner_width*4/5], n=[10, 5]) {
       let (tsize = text_size - (len(texts[4-$row][$col]) - 1) * 1.5) {
 	move([0, -tsize/2, 0])
-	text(texts[4-$row][$col], font="Arial Narrow", size=tsize, halign="center", valign="baseline");
+	text(texts[4-$row][$col], font=text_font, size=tsize, halign="center", valign="baseline");
       }
     }
   }
