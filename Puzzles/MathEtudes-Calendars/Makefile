@@ -18,7 +18,6 @@ $(OUT)/two_colors/frame.stl: $(SCRIPT)
 
 langs: $(LANGS)
 	for lang in $^; do \
-		echo lang=$$lang \
 		$(OSCAD) -o $(OUT)/simple/simple-base-$$lang.stl -D generate=\"simple_base\" -D text_lang=\"$$lang\" $(SCRIPT) ; \
 		$(OSCAD) -o $(OUT)/two_colors/text-$$lang.stl -D generate=\"2col_text\" -D text_lang=\"$$lang\" $(SCRIPT) ; \
 		$(OSCAD) -o $(OUT)/two_colors/plate-$$lang.stl -D generate=\"2col_plate\" -D text_lang=\"$$lang\" $(SCRIPT) ; \
