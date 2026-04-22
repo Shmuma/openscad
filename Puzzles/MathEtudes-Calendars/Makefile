@@ -2,7 +2,7 @@
 OSCAD := "/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD"
 SHELL := /bin/bash
 SCRIPT := Panov10x5.scad
-OUT := stl-Panov10x5-SansNarrow
+OUT := stl-Panov10x5
 
 LANGS := en ru de fr sv
 
