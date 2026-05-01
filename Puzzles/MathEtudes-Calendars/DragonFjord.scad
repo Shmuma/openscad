@@ -12,7 +12,7 @@ include <BOSL2/std.scad>
 // - 2col_full: for debugging the alignment 
 
 // Model to generate
-generate = "pieces"; // [pieces, simple_base, 2col_frame, 2col_plate, 2col_text]
+generate = "simple_base"; // [pieces, simple_base, 2col_frame, 2col_plate, 2col_text]
 
 // Size of one basic square
 pieces_grid = 15;     // [10:20]
@@ -36,20 +36,17 @@ text_size = 8.5;
 layer_height = 0.3;
 text_depth = layer_height*2;     // text depth in simple_base variant
 
-// Offset of the window relative to the grid size
-window_offset = -1.5;
-
 // Tolerance for pieces fitting
 tol = 0.2;
 // Chamfer of pieces and base
 chamfer = 0.4;
 // Circle extrapolation
-$fn = 100;
+$fn = 10;
 
 // end of tunable parameters
 // size of the inner part
-inner_width = pieces_grid*5;
-inner_length = pieces_grid*10;
+inner_width = pieces_grid*7;
+inner_length = pieces_grid*7;
 inner_thick = base_height - base_thick;
 base_width = inner_width + base_border*2;
 base_length = inner_length + base_border*2;
@@ -59,39 +56,49 @@ base_length = inner_length + base_border*2;
 show_grid = false;
 
 texts_ru =
-  [["ЯНВ", "ФЕВ", "МАР", "АПР",  "1",  "2",  "3",  "4", "ПН", "ВТ"],
-   ["МАЙ", "ИЮН",   "5",  "6",   "7",  "8",  "9", "10", "11", "СР"],
-   [ "12",  "13",  "14",  "15", "16", "17", "18", "19", "20", "ЧТ"],
-   ["ИЮЛ", "АВГ",  "21",  "22", "23", "24", "25", "26", "27", "ПТ"],
-   ["СЕН", "ОКТ", "НОЯ", "ДЕК", "28", "29", "30", "31", "ВС", "СБ"]];
+  [["ЯНВ", "ФЕВ", "МАР", "АПР", "МАЙ", "ИЮН",   ""], 
+   ["ИЮЛ", "АВГ", "СЕН", "ОКТ", "НОЯ", "ДЕК",   ""],
+   [  "1",   "2",   "3",   "4",   "5",   "6",  "7"],
+   [  "8",   "9",  "10",  "11",  "12",  "13", "14"],
+   [ "15",  "16",  "17",  "18",  "19",  "20", "21"],
+   [ "22",  "23",  "24",  "25",  "26",  "27", "28"],
+   [ "29",  "30",  "31",    "",    "",    "",   ""]];
 
 texts_en =
-  [["JAN", "FEB", "MAR", "APR",  "1",  "2",  "3",  "4", "MO", "TU"],
-   ["MAY", "JUN",   "5",  "6",   "7",  "8",  "9", "10", "11", "WE"],
-   [ "12",  "13",  "14",  "15", "16", "17", "18", "19", "20", "TH"],
-   ["JUL", "AUG",  "21",  "22", "23", "24", "25", "26", "27", "FR"],
-   ["SEP", "OCT", "NOV", "DEC", "28", "29", "30", "31", "SU", "SA"]];
+  [["JAN", "FEB", "MAR", "APR", "MAY", "JUN",   ""], 
+   ["JUL", "AUG", "SEP", "OCT", "NOV", "DEC",   ""],
+   [  "1",   "2",   "3",   "4",   "5",   "6",  "7"],
+   [  "8",   "9",  "10",  "11",  "12",  "13", "14"],
+   [ "15",  "16",  "17",  "18",  "19",  "20", "21"],
+   [ "22",  "23",  "24",  "25",  "26",  "27", "28"],
+   [ "29",  "30",  "31",    "",    "",    "",   ""]];
 
 texts_de =
-  [["JAN", "FEB", "MÄR", "APR",  "1",  "2",  "3",  "4", "MO", "DI"],
-   ["MAI", "JUN",   "5",  "6",   "7",  "8",  "9", "10", "11", "MI"],
-   [ "12",  "13",  "14",  "15", "16", "17", "18", "19", "20", "DO"],
-   ["JUL", "AUG",  "21",  "22", "23", "24", "25", "26", "27", "FR"],
-   ["SEP", "OKT", "NOV", "DEZ", "28", "29", "30", "31", "SO", "SA"]];
+  [["JAN", "FEB", "MÄR", "APR", "MAI", "JUN",   ""], 
+   ["JUL", "AUG", "SEP", "OKT", "NOV", "DEZ",   ""],
+   [  "1",   "2",   "3",   "4",   "5",   "6",  "7"],
+   [  "8",   "9",  "10",  "11",  "12",  "13", "14"],
+   [ "15",  "16",  "17",  "18",  "19",  "20", "21"],
+   [ "22",  "23",  "24",  "25",  "26",  "27", "28"],
+   [ "29",  "30",  "31",    "",    "",    "",   ""]];
 
 texts_sv =
-  [["JAN", "FEB", "MAR", "APR",  "1",  "2",  "3",  "4", "MÅ", "TI"],
-   ["MAJ", "JUN",   "5",  "6",   "7",  "8",  "9", "10", "11", "ON"],
-   [ "12",  "13",  "14",  "15", "16", "17", "18", "19", "20", "TO"],
-   ["JUL", "AUG",  "21",  "22", "23", "24", "25", "26", "27", "FR"],
-   ["SEP", "OKT", "NOV", "DEC", "28", "29", "30", "31", "SÖ", "LÖ"]];
+  [["JAN", "FEB", "MAR", "APR", "MAJ", "JUN",   ""], 
+   ["JUL", "AUG", "SEP", "OKT", "NOV", "DEC",   ""],
+   [  "1",   "2",   "3",   "4",   "5",   "6",  "7"],
+   [  "8",   "9",  "10",  "11",  "12",  "13", "14"],
+   [ "15",  "16",  "17",  "18",  "19",  "20", "21"],
+   [ "22",  "23",  "24",  "25",  "26",  "27", "28"],
+   [ "29",  "30",  "31",    "",    "",    "",   ""]];
 
 texts_fr =
-  [["JAN", "FEV", "MAR", "AVR",  "1",  "2",  "3",  "4", "LU", "MA"],
-   ["MAI", "JUN",   "5",  "6",   "7",  "8",  "9", "10", "11", "ME"],
-   [ "12",  "13",  "14",  "15", "16", "17", "18", "19", "20", "JE"],
-   ["JUI", "AOU",  "21",  "22", "23", "24", "25", "26", "27", "VE"],
-   ["SEP", "OCT", "NOV", "DEC", "28", "29", "30", "31", "DI", "SA"]];
+  [["JAN", "FEV", "MAR", "AVR", "MAI", "JUN",   ""], 
+   ["JUI", "AOU", "SEP", "OCT", "NOV", "DEC",   ""],
+   [  "1",   "2",   "3",   "4",   "5",   "6",  "7"],
+   [  "8",   "9",  "10",  "11",  "12",  "13", "14"],
+   [ "15",  "16",  "17",  "18",  "19",  "20", "21"],
+   [ "22",  "23",  "24",  "25",  "26",  "27", "28"],
+   [ "29",  "30",  "31",    "",    "",    "",   ""]];
 
 texts = (text_lang == "en" ?
 	 texts_en :
@@ -105,13 +112,14 @@ texts = (text_lang == "en" ?
 	     texts_sv :
 	     (assert_equal(1, 2, "Language is not supported")))))));
 
+
 module calendar_text(depth) {
   move([inner_length/2, inner_width/2])
   linear_extrude(depth) {
-    grid_copies(size=[inner_length*9/10, inner_width*4/5], n=[10, 5]) {
-      let (tsize = text_size - (len(texts[4-$row][$col]) - 1) * 1.5) {
+    grid_copies(size=[inner_length*6/7, inner_width*6/7], n=[7, 7]) {
+      let (tsize = text_size - (len(texts[6-$row][$col]) - 1) * 1.5) {
 	move([0, -tsize/2, 0])
-	text(texts[4-$row][$col], font=text_font, size=tsize, halign="center", valign="baseline");
+	text(texts[6-$row][$col], font=text_font, size=tsize, halign="center", valign="baseline");
       }
     }
   }
@@ -128,16 +136,22 @@ module base() {
       calendar_text(text_depth + tol);
   }
 
+  // forward-right bump
+  move([base_border + pieces_grid*3, base_border-chamfer, base_thick])
+    cuboid(size=[pieces_grid*4+chamfer, pieces_grid+chamfer, inner_thick], anchor=FWD+LEFT+BOT, chamfer=chamfer, edges=[TOP+LEFT, TOP+BACK]);
 
-
+  // top-right bump
+  move([base_border + pieces_grid*6, base_border + pieces_grid*5+chamfer, base_thick])
+    cuboid(size=[pieces_grid+chamfer, pieces_grid*2+chamfer, inner_thick], anchor=FWD+LEFT+BOT, chamfer=chamfer, edges=[TOP+LEFT, TOP+FWD]);
+  
   if (show_grid) {
     move([base_border, base_border, base_thick + tol]) {
-      for (r = [1:4]) {
+      for (r = [1:6]) {
 	y = r*pieces_grid;
 	stroke([[0, y], [inner_length, y]], width=0.3);
       }
 
-      for (c = [1:9]) {
+      for (c = [1:6]) {
 	x = c*pieces_grid;
 	stroke([[x, 0], [x, inner_width]], width=0.3);
       }
@@ -166,19 +180,8 @@ module piece(points) {
   offset_sweep(offset(piece_path(points), delta=-tol, closed=true), height=pieces_thick, ends=os_chamfer(chamfer));
 }
 
-// module piece_with_hole(points, hole) {
-//   difference() {
-//     piece(points);
-//     down(tol)
-//       offset_sweep(offset(offset(piece_path(hole), delta=-tol, closed=true),
-// 			  delta=window_offset, closed=true),
-// 		   height=pieces_thick+tol*2, ends=os_chamfer(-chamfer));
-//   }
-// }
-
 
 module pieces() {
-  // without holes
   for (p = [P1, P2, P3, P4, P5, P6, P7, P8]) {
     piece(p);
   }
