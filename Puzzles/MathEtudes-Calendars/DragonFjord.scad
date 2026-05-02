@@ -12,7 +12,7 @@ include <BOSL2/std.scad>
 // - 2col_full: for debugging the alignment 
 
 // Model to generate
-generate = "simple_base"; // [pieces, simple_base, 2col_frame, 2col_plate, 2col_text]
+generate = "2col_plate"; // [pieces, simple_base, 2col_frame, 2col_plate, 2col_text]
 
 // Size of one basic square
 pieces_grid = 15;     // [10:20]
@@ -208,6 +208,13 @@ module twocol_frame() {
     move([base_border, base_border, -tol/2])
       cuboid([inner_length, inner_width, inner_thick + tol], anchor=FWD+LEFT+BOT);
   }
+
+  move([base_border-tol, base_border-tol, 0])
+    cuboid(size=[pieces_grid*4, pieces_grid, inner_thick], anchor=FWD+LEFT+BOT);
+
+  move([base_border-tol, base_border + pieces_grid*5 + tol, 0])
+    cuboid(size=[pieces_grid, pieces_grid*2, inner_thick], anchor=FWD+LEFT+BOT);
+
 }
 
 
