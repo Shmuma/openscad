@@ -11,7 +11,7 @@ include <BOSL2/std.scad>
 // - 2col_full: for debugging the alignment 
 
 // Model to generate
-generate = "pieces"; // [pieces, simple_base, 2col_frame, 2col_plate, 2col_text]
+generate = "simple_full"; // [pieces, simple_base, 2col_frame, 2col_plate, 2col_text]
 
 // Size of one basic square
 pieces_grid = 15;     // [10:20]
@@ -117,17 +117,20 @@ module calendar_text(depth) {
 }
 
 
+module base_text() {
+    move([base_border, base_border, base_thick - text_depth])
+      calendar_text(text_depth);
+}
+
+
 module base() {
   difference() {
     cuboid(size=[base_length, base_width, base_height], anchor=FWD+LEFT+BOT, chamfer=chamfer);
       
     move([base_border, base_border, base_thick])
       cuboid(size=[inner_length, inner_width, inner_thick + tol], anchor=FWD+LEFT+BOT, chamfer=-chamfer, edges=[TOP]);
-    move([base_border, base_border, base_thick - text_depth])
-      calendar_text(text_depth + tol);
+    base_text();
   }
-
-
 
   if (show_grid) {
     move([base_border, base_border, base_thick + tol]) {
@@ -142,8 +145,8 @@ module base() {
       }
     }
   }
-
 }
+
 
 
 function piece_path(pts) = [for (p = pts) [p[0]*pieces_grid, p[1]*pieces_grid]];
@@ -253,8 +256,11 @@ if (generate == "pieces")
   pieces();
 else if (generate == "simple_base")
   base();
+else if (generate == "simple_text")
+  base_text();
 else if (generate == "simple_full") {
   base();
+  base_text();
   move([base_border, base_border, base_thick]) {
     pieces();
   }
@@ -270,3 +276,6 @@ else if (generate == "2col_full") {
   move([0, base_border - base_thick, inner_thick])
     twocol_plate();
 }
+
+
+

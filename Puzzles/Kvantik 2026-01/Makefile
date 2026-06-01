@@ -21,6 +21,7 @@ $(OUT_CALENDAR)/two_colors/frame.stl: $(SCRIPT_CALENDAR)
 langs_calendar: $(LANGS)
 	for lang in $^; do \
 		$(OSCAD) -o $(OUT_CALENDAR)/simple/simple-base-$$lang.stl -D generate=\"simple_base\" -D text_lang=\"$$lang\" $(SCRIPT_CALENDAR) ; \
+		$(OSCAD) -o $(OUT_CALENDAR)/simple/simple-base-text-$$lang.stl -D generate=\"simple_text\" -D text_lang=\"$$lang\" $(SCRIPT_CALENDAR) ; \
 		$(OSCAD) -o $(OUT_CALENDAR)/two_colors/text-$$lang.stl -D generate=\"2col_text\" -D text_lang=\"$$lang\" $(SCRIPT_CALENDAR) ; \
 		$(OSCAD) -o $(OUT_CALENDAR)/two_colors/plate-$$lang.stl -D generate=\"2col_plate\" -D text_lang=\"$$lang\" $(SCRIPT_CALENDAR) ; \
 	done
