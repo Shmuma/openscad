@@ -7,7 +7,7 @@ LANGS := en ru de fr sv
 
 .PHONY: all_calendar dirs langs $(LANGS)
 
-all_calendar: dirs $(OUT_CALENDAR)/pieces.stl langs_calendar
+all_calendar: dirs $(OUT_CALENDAR)/pieces.stl langs_calendar $(OUT_CALENDAR)/two_colors/frame.stl
 
 dirs:
 	mkdir -p $(OUT_CALENDAR)/{simple,two_colors}
